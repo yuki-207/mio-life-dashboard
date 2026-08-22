@@ -29,6 +29,78 @@
       --badge-text: #FFFFFF;
     }
 
+    /* 🎂 2月7日 澪 專屬生日主題 */
+    body.theme-birthday {
+      --bg-gradient: linear-gradient(135deg, #ff9a9e 0%, #fecfef 50%, #feada6 100%);
+      --card-bg: rgba(255, 255, 255, 0.88);
+      --card-border: rgba(255, 182, 193, 0.6);
+      --text-main: #4a1525;
+      --text-sub: #8a4b5d;
+      --accent: #e84393;
+      --badge-bg: #fd79a8;
+      --badge-text: #FFFFFF;
+    }
+
+    /* 🎋 端午節主題 (竹葉翠綠) */
+    body.theme-duanwu {
+      --bg-gradient: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+      --card-bg: rgba(255, 255, 255, 0.88);
+      --card-border: rgba(56, 239, 125, 0.5);
+      --text-main: #0c4b33;
+      --text-sub: #277554;
+      --accent: #11998e;
+      --badge-bg: #10ac84;
+      --badge-text: #FFFFFF;
+    }
+
+    /* 🌕 中秋節主題 (皓月金輝) */
+    body.theme-midautumn {
+      --bg-gradient: linear-gradient(135deg, #0f2027 0%, #203a43 50%, #2c5364 100%);
+      --card-bg: rgba(255, 248, 220, 0.85);
+      --card-border: rgba(241, 196, 15, 0.5);
+      --text-main: #2c3e50;
+      --text-sub: #546e7a;
+      --accent: #f39c12;
+      --badge-bg: #f1c40f;
+      --badge-text: #2c3e50;
+    }
+
+    /* 🧧 農曆新年主題 */
+    body.theme-cny {
+      --bg-gradient: linear-gradient(135deg, #d63031 0%, #e17055 50%, #fdcb6e 100%);
+      --card-bg: rgba(255, 248, 240, 0.88);
+      --card-border: rgba(253, 203, 110, 0.6);
+      --text-main: #2d3436;
+      --text-sub: #636e72;
+      --accent: #d63031;
+      --badge-bg: #d63031;
+      --badge-text: #FFFFFF;
+    }
+
+    /* 🎃 萬聖節主題 */
+    body.theme-halloween {
+      --bg-gradient: linear-gradient(135deg, #2d132c 0%, #801336 50%, #ee4540 100%);
+      --card-bg: rgba(20, 15, 25, 0.85);
+      --card-border: rgba(238, 69, 64, 0.4);
+      --text-main: #f8f9fa;
+      --text-sub: #a8a7a7;
+      --accent: #ff7675;
+      --badge-bg: #ee4540;
+      --badge-text: #FFFFFF;
+    }
+
+    /* 🎄 聖誕節主題 */
+    body.theme-xmas {
+      --bg-gradient: linear-gradient(135deg, #093028 0%, #237a57 100%);
+      --card-bg: rgba(255, 255, 255, 0.88);
+      --card-border: rgba(35, 122, 87, 0.4);
+      --text-main: #113f28;
+      --text-sub: #376e4b;
+      --accent: #c0392b;
+      --badge-bg: #e74c3c;
+      --badge-text: #FFFFFF;
+    }
+
     * {
       box-sizing: border-box;
       margin: 0;
@@ -50,7 +122,6 @@
       transition: background 0.8s ease, color 0.5s ease;
     }
 
-    /* 密集星光背景圖層 (僅夜間顯示) */
     .stars-overlay {
       position: fixed;
       top: 0;
@@ -81,7 +152,7 @@
       z-index: 0;
     }
 
-    body.theme-night .stars-overlay {
+    body.theme-night .stars-overlay, body.theme-midautumn .stars-overlay {
       opacity: 0.95;
     }
 
@@ -91,26 +162,26 @@
       100% { opacity: 0.6; transform: scale(1); }
     }
 
-    /* 切換模式按鈕 */
     .theme-toggle-btn {
       position: fixed;
-      top: 15px;
-      right: 15px;
+      top: 12px;
+      right: 12px;
       z-index: 100;
-      background: rgba(255, 255, 255, 0.35);
-      backdrop-filter: blur(8px);
+      background: rgba(255, 255, 255, 0.25);
+      backdrop-filter: blur(6px);
       border: 1px solid var(--card-border);
       color: var(--text-main);
-      padding: 6px 14px;
-      border-radius: 20px;
+      padding: 4px 8px;
+      border-radius: 12px;
       cursor: pointer;
-      font-size: 0.75rem;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      font-size: 0.7rem;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.08);
       transition: all 0.3s ease;
     }
 
     .theme-toggle-btn:hover {
-      background: rgba(255, 255, 255, 0.6);
+      background: rgba(255, 255, 255, 0.5);
+      transform: scale(1.05);
     }
 
     .dashboard-container {
@@ -317,7 +388,7 @@
 </head>
 <body class="theme-day">
 
-  <button class="theme-toggle-btn" onclick="toggleThemeManual()">🌗 測試日/夜模式切換</button>
+  <button class="theme-toggle-btn" onclick="toggleThemeManual()">🌗 Theme</button>
 
   <div class="stars-overlay"></div>
 
@@ -327,10 +398,10 @@
       <!-- 第一排：時鐘 + 香港天氣 + 福岡天氣 -->
       <div class="grid-row-3">
         <div class="card">
-          <div class="greeting">こんにちは, 澪。</div>
+          <div class="greeting" id="user-greeting">こんにちは, 澪。</div>
           <div class="time-display" id="clock">10:58</div>
           <div class="date-display" id="date-str">SAT · 22 AUG 2026</div>
-          <div class="greeting">接受每一個不完美的人，包括自己。</div>
+          <div class="greeting" id="user-quote">接受每一個不完美的人，包括自己。</div>
           
           <div class="london-sub-box">
             <span class="london-label">🌎 倫敦 LONDON</span>
@@ -440,17 +511,30 @@
       calcCountdown();
     }
 
-    // 手動測試切換主題
+    // 手動測試切換主題 (日間 -> 夜間 -> 🎂生日 -> 🎋端午 -> 🌕中秋 -> 🧧新年 -> 🎃萬聖節 -> 🎄聖誕)
     let isManualTheme = false;
+    const themesList = ['theme-day', 'theme-night', 'theme-birthday', 'theme-duanwu', 'theme-midautumn', 'theme-cny', 'theme-halloween', 'theme-xmas'];
+    let themeIndex = 0;
+
     function toggleThemeManual() {
       isManualTheme = true;
       const body = document.body;
-      if (body.classList.contains('theme-night')) {
-        body.classList.remove('theme-night');
-        body.classList.add('theme-day');
+      body.className = '';
+      themeIndex = (themeIndex + 1) % themesList.length;
+      body.classList.add(themesList[themeIndex]);
+
+      const quotes = {
+        'theme-birthday': '🎂 澪，生日快樂！願你新的一歲充滿陽光與美好✨',
+        'theme-duanwu': '🎋 端午安康！粽香勝意，平安喜樂！',
+        'theme-midautumn': '🌕 月圓人團圓，祝你中秋節快樂！',
+        'theme-cny': '🧧 新年快樂！萬事如意，恭喜發財！',
+        'theme-halloween': '🎃 Happy Halloween! 不給糖就搗蛋！',
+        'theme-xmas': '🎄 Merry Christmas! 願聖誕喜樂伴隨你！'
+      };
+      if (quotes[themesList[themeIndex]]) {
+        document.getElementById('user-quote').textContent = quotes[themesList[themeIndex]];
       } else {
-        body.classList.remove('theme-day');
-        body.classList.add('theme-night');
+        document.getElementById('user-quote').textContent = '接受每一個不完美的人，包括自己。';
       }
     }
 
@@ -555,16 +639,56 @@
       document.getElementById('cal-status').textContent = '本地備用行程';
     }
 
-    // 4. 自動主題切換
+    // 4. 自動主題與節日判斷 (含農曆端午與中秋年度對照)
     function handleTheme(now) {
+      const year = now.getFullYear();
+      const month = now.getMonth() + 1;
+      const date = now.getDate();
       const hours = now.getHours();
       const body = document.body;
+      const quoteEl = document.getElementById('user-quote');
 
       body.className = '';
-      if (hours >= 6 && hours < 18) {
+
+      // 端午節對照表 (2026-2030)
+      const duanwuDates = { 2026: '6-19', 2027: '6-9', 2028: '5-28', 2029: '6-16', 2030: '6-5' };
+      // 中秋節對照表 (2026-2030)
+      const midautumnDates = { 2026: '9-25', 2027: '9-15', 2028: '10-3', 2029: '9-22', 2030: '9-12' };
+
+      const currentDateStr = `${month}-${date}`;
+
+      // 🎂 2月7日 澪 的生日
+      if (month === 2 && date === 7) {
+        body.classList.add('theme-birthday');
+        quoteEl.textContent = '🎂 澪，生日快樂！願你新的一歲充滿陽光與美好✨';
+      }
+      // 🎋 端午節
+      else if (duanwuDates[year] === currentDateStr) {
+        body.classList.add('theme-duanwu');
+        quoteEl.textContent = '🎋 端午安康！粽香勝意，平安喜樂！';
+      }
+      // 🌕 中秋節
+      else if (midautumnDates[year] === currentDateStr) {
+        body.classList.add('theme-midautumn');
+        quoteEl.textContent = '🌕 月圓人團圓，祝你中秋節快樂！';
+      }
+      // 🎃 10月31日 萬聖節
+      else if (month === 10 && date === 31) {
+        body.classList.add('theme-halloween');
+        quoteEl.textContent = '🎃 Happy Halloween! 不給糖就搗蛋！';
+      }
+      // 🎄 12月24-25日 聖誕節
+      else if (month === 12 && (date === 24 || date === 25)) {
+        body.classList.add('theme-xmas');
+        quoteEl.textContent = '🎄 Merry Christmas! 願聖誕喜樂伴隨你！';
+      }
+      // 一般日/夜切換
+      else if (hours >= 6 && hours < 18) {
         body.classList.add('theme-day');
+        quoteEl.textContent = '接受每一個不完美的人，包括自己。';
       } else {
         body.classList.add('theme-night');
+        quoteEl.textContent = '接受每一個不完美的人，包括自己。';
       }
     }
 
