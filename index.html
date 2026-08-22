@@ -6,26 +6,26 @@
   <title>Personal Life Dashboard</title>
   <style>
     :root {
-      /* 日間日光質感漸變背景 */
-      --bg-gradient: linear-gradient(135deg, #fef6e4 0%, #eef2f3 50%, #e2e2e2 100%);
-      --card-bg: rgba(255, 255, 255, 0.85);
-      --card-border: #D8D2C6;
-      --text-main: #333333;
-      --text-sub: #666666;
-      --accent: #B05D3A;
-      --badge-bg: #E36241;
+      /* 日間：夢幻日落極光漸變 (Aurora Sunset) */
+      --bg-gradient: linear-gradient(135deg, #e0c3fc 0%, #8ec5fc 100%);
+      --card-bg: rgba(255, 255, 255, 0.82);
+      --card-border: rgba(255, 255, 255, 0.6);
+      --text-main: #2D2342;
+      --text-sub: #6E6285;
+      --accent: #8A4FFF;
+      --badge-bg: #9D62FF;
       --badge-text: #FFFFFF;
     }
 
-    /* 夜間夜空升級漸變背景 */
+    /* 夜間：深邃神秘極光漸變 (Night Aurora) */
     body.theme-night {
-      --bg-gradient: linear-gradient(135deg, #0b0d17 0%, #1a1c2e 50%, #080a10 100%);
-      --card-bg: rgba(29, 33, 54, 0.85);
-      --card-border: #2A304D;
-      --text-main: #E0E6ED;
-      --text-sub: #8C99B2;
-      --accent: #5C82FF;
-      --badge-bg: #D93838;
+      --bg-gradient: linear-gradient(135deg, #180b30 0%, #0d2b45 100%);
+      --card-bg: rgba(23, 20, 41, 0.82);
+      --card-border: rgba(138, 79, 255, 0.25);
+      --text-main: #F0E6FF;
+      --text-sub: #A393C2;
+      --accent: #B082FF;
+      --badge-bg: #6C38D9;
       --badge-text: #FFFFFF;
     }
 
@@ -73,12 +73,12 @@
 
     .card {
       background-color: var(--card-bg);
-      backdrop-filter: blur(8px);
+      backdrop-filter: blur(10px);
       border: 1px solid var(--card-border);
       border-radius: 16px;
       padding: 16px;
       position: relative;
-      box-shadow: 0 6px 16px rgba(0,0,0,0.06);
+      box-shadow: 0 8px 20px rgba(0,0,0,0.06);
       display: flex;
       flex-direction: column;
     }
@@ -190,7 +190,7 @@
 
     .custom-input {
       flex: 1;
-      background: transparent;
+      background: rgba(255, 255, 255, 0.3);
       border: 1px solid var(--card-border);
       border-radius: 6px;
       color: var(--text-main);
@@ -244,7 +244,7 @@
       height: 90px;
       object-fit: cover;
       border-radius: 10px;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+      box-shadow: 0 4px 8px rgba(0,0,0,0.12);
     }
   </style>
 </head>
@@ -400,7 +400,7 @@
       document.getElementById('countdown-days').innerHTML = `${diffDays > 0 ? diffDays : 0} <span style="font-size: 0.9rem;">DAYS</span>`;
     }
 
-    // 3. 📅 TODAY 行程 (Google Calendar 自動同步)
+    // 3. 📅 TODAY 行程 (Google Calendar 同步)
     const GOOGLE_ICAL_URL = 'https://calendar.google.com/calendar/ical/0207ncl%40gmail.com/public/basic.ics';
 
     async function fetchGoogleCalendar() {
@@ -470,7 +470,7 @@
       document.getElementById('cal-status').textContent = '本地備用行程';
     }
 
-    // 4. 主題切換邏輯 (日夜自動切換)
+    // 4. 主題切換邏輯
     function handleTheme(now) {
       const month = now.getMonth() + 1;
       const date = now.getDate();
@@ -565,7 +565,7 @@
       return "⛅";
     }
 
-    // 7. 港鐵 API (使用港鐵官方開放 Data 兼備用雙重備援，永不失效)
+    // 7. 港鐵 API
     async function fetchMTRData() {
       const now = new Date();
       const timeString = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}:${String(now.getSeconds()).padStart(2, '0')}`;
@@ -604,7 +604,6 @@
         }
         throw new Error('Fallback required');
       } catch (e) {
-        // 智慧備援演算：根據當前時間動態生成合理的康城站班次
         let currentHour = now.getHours();
         let currentMin = now.getMinutes();
         let html = '';
@@ -628,7 +627,7 @@
       }
     }
 
-    // 8. 載入極穩定的隨機貓咪照片
+    // 8. 載入隨機貓咪照片
     function loadRandomCatImages() {
       const timestamp = new Date().getTime();
       document.getElementById('cat-1').src = `https://cataas.com/cat?t=${timestamp}`;
