@@ -157,20 +157,21 @@
     }
 
     .countdown-num {
-      font-size: 2.5rem;
+      font-size: 2.3rem;
       font-weight: bold;
       color: var(--accent);
       text-align: right;
+      margin-top: 4px;
     }
 
-    /* 互動式 TODO 樣式 */
-    .todo-input-container {
+    /* 共享輸入欄與按鈕樣式 */
+    .input-container {
       display: flex;
       gap: 6px;
       margin-bottom: 8px;
     }
 
-    .todo-input {
+    .custom-input {
       flex: 1;
       background: transparent;
       border: 1px solid var(--card-border);
@@ -180,7 +181,7 @@
       font-size: 0.8rem;
     }
 
-    .btn-add {
+    .btn-action {
       background: var(--accent);
       color: white;
       border: none;
@@ -190,6 +191,16 @@
       font-size: 0.8rem;
     }
 
+    /* TODAY 列表樣式 */
+    .schedule-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.8rem;
+      margin-bottom: 4px;
+    }
+
+    /* TODO 列表樣式 */
     .todo-item {
       display: flex;
       align-items: center;
@@ -223,7 +234,7 @@
       opacity: 1;
     }
 
-    /* 側邊欄貓咪 */
+    /* 側邊欄 */
     .sidebar {
       width: 200px;
       background-color: var(--card-bg);
@@ -284,7 +295,7 @@
         </div>
       </div>
 
-      <!-- 第二排：港鐵到站 + TODAY + 今日日語 -->
+      <!-- 第二排：港鐵到站 + TODAY (可編輯) + 今日日語 -->
       <div class="grid-row">
         <div class="card">
           <div class="card-title">🚇 港鐵康城站 LOHAS PARK <span style="font-size: 0.6rem; margin-left: auto;" id="mtr-time">更新 10:58:20</span></div>
@@ -293,14 +304,17 @@
           </div>
         </div>
 
+        <!-- 📅 TODAY 卡片 (已升級為可動態新增/刪除) -->
         <div class="card">
           <div class="card-title">📅 TODAY</div>
-          <ul style="font-size: 0.8rem; list-style: none; line-height: 1.6;" id="today-schedule">
-            <li>11:30 準備出門</li>
-            <li>13:30 與朋友 Lunch</li>
-            <li>16:00 拍攝 / 整理相片</li>
-            <li>19:00 日文 N4 課堂</li>
-          </ul>
+          <div class="input-container">
+            <input type="text" id="schedule-time" class="custom-input" placeholder="時間 (如 11:30)" style="flex: 0.8;">
+            <input type="text" id="schedule-text" class="custom-input" placeholder="行程內容...">
+            <button class="btn-action" onclick="addSchedule()">加</button>
+          </div>
+          <div id="schedule-list">
+            <!-- 動態生成 TODAY 行程 -->
+          </div>
         </div>
 
         <div class="card">
@@ -311,21 +325,24 @@
         </div>
       </div>
 
-      <!-- 第三排：NEXT TRIP + MEMO + 今日小事 -->
+      <!-- 第三排：NEXT TRIP (可編輯) + MEMO + 今日小事 -->
       <div class="grid-row">
+        <!-- ✈️ NEXT TRIP 卡片 (已升級為可直接設定目的地與日期) -->
         <div class="card">
           <div class="card-title">✈️ NEXT TRIP</div>
-          <div style="font-size: 1.2rem; font-weight: bold;">京都 KYOTO</div>
-          <div style="font-size: 0.75rem; color: var(--text-sub);">出發日期：10 OCT 2026</div>
-          <div class="countdown-num" id="countdown-days">48 <span style="font-size: 0.9rem;">DAYS</span></div>
+          <div style="display: flex; flex-direction: column; gap: 4px; margin-bottom: 6px;">
+            <input type="text" id="trip-dest-input" class="custom-input" placeholder="目的地 (例如: 京都 KYOTO)" onchange="updateTripInfo()">
+            <input type="date" id="trip-date-input" class="custom-input" onchange="updateTripInfo()">
+          </div>
+          <div class="countdown-num" id="countdown-days">0 <span style="font-size: 0.9rem;">DAYS</span></div>
         </div>
 
-        <!-- 互動式 MEMO / TODO 卡片 -->
+        <!-- 📝 MEMO / TODO 卡片 -->
         <div class="card">
           <div class="card-title">📝 MEMO / TODO</div>
-          <div class="todo-input-container">
-            <input type="text" id="new-todo" class="todo-input" placeholder="新增待辦事項..." onkeypress="handleKeyPress(event)">
-            <button class="btn-add" onclick="addTodo()">新增</button>
+          <div class="input-container">
+            <input type="text" id="new-todo" class="custom-input" placeholder="新增待辦事項..." onkeypress="handleKeyPress(event)">
+            <button class="btn-action" onclick="addTodo()">新增</button>
           </div>
           <div id="todo-list">
             <!-- 動態生成 TODO -->
@@ -366,18 +383,80 @@
       document.getElementById('date-str').textContent = now.toLocaleDateString('en-GB', options).toUpperCase().replace(',', ' ·');
       
       handleTheme(now);
-      calcCountdown(now);
+      calcCountdown();
     }
 
-    // 2. 自動倒數計時（京都旅行）
-    function calcCountdown(now) {
-      const targetDate = new Date('2026-10-10T00:00:00');
+    // 2. ✈️ NEXT TRIP 動態更新與儲存
+    let tripData = JSON.parse(localStorage.getItem('my_dashboard_trip')) || {
+      dest: '京都 KYOTO',
+      date: '2026-10-10'
+    };
+
+    function initTripUI() {
+      document.getElementById('trip-dest-input').value = tripData.dest;
+      document.getElementById('trip-date-input').value = tripData.date;
+      calcCountdown();
+    }
+
+    function updateTripInfo() {
+      tripData.dest = document.getElementById('trip-dest-input').value;
+      tripData.date = document.getElementById('trip-date-input').value;
+      localStorage.setItem('my_dashboard_trip', JSON.stringify(tripData));
+      calcCountdown();
+    }
+
+    function calcCountdown() {
+      if (!tripData.date) {
+        document.getElementById('countdown-days').innerHTML = `-- <span style="font-size: 0.9rem;">DAYS</span>`;
+        return;
+      }
+      const now = new Date();
+      const targetDate = new Date(tripData.date + 'T00:00:00');
       const diffTime = targetDate - now;
       const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
       document.getElementById('countdown-days').innerHTML = `${diffDays > 0 ? diffDays : 0} <span style="font-size: 0.9rem;">DAYS</span>`;
     }
 
-    // 3. 主題切換邏輯
+    // 3. 📅 TODAY 行程管理 (LocalStorage)
+    let schedules = JSON.parse(localStorage.getItem('my_dashboard_schedules')) || [
+      { time: '11:30', text: '準備出門' },
+      { time: '13:30', text: '與朋友 Lunch' },
+      { time: '16:00', text: '拍攝 / 整理相片' },
+      { time: '19:00', text: '日文 N4 課堂' }
+    ];
+
+    function renderSchedules() {
+      const container = document.getElementById('schedule-list');
+      container.innerHTML = '';
+      schedules.forEach((item, index) => {
+        const div = document.createElement('div');
+        div.className = 'schedule-item';
+        div.innerHTML = `
+          <span><b>${item.time}</b> ${item.text}</span>
+          <button class="btn-del" onclick="deleteSchedule(${index})">✕</button>
+        `;
+        container.appendChild(div);
+      });
+      localStorage.setItem('my_dashboard_schedules', JSON.stringify(schedules));
+    }
+
+    function addSchedule() {
+      const timeInput = document.getElementById('schedule-time');
+      const textInput = document.getElementById('schedule-text');
+      if (timeInput.value.trim() && textInput.value.trim()) {
+        schedules.push({ time: timeInput.value.trim(), text: textInput.value.trim() });
+        timeInput.value = '';
+        textInput.value = '';
+        renderSchedules();
+      }
+    }
+
+    function deleteSchedule(index) {
+      schedules.splice(index, 1);
+      renderSchedules();
+    }
+
+    // 4. 主題切換邏輯
     function handleTheme(now) {
       const month = now.getMonth() + 1;
       const date = now.getDate();
@@ -407,7 +486,7 @@
       }
     }
 
-    // 4. 香港天文台 API
+    // 5. 天氣 API
     async function fetchHKWeather() {
       try {
         const response = await fetch('https://data.weather.gov.hk/weatherAPI/opendata/weather.php?dataType=rhrread&lang=tc');
@@ -425,7 +504,7 @@
       }
     }
 
-    // 5. 港鐵即時到站 API
+    // 6. 港鐵 API
     async function fetchMTRData() {
       try {
         const response = await fetch('https://rt.data.gov.hk/v1/transport/mtr/getSchedule.php?line=TKL&sta=LHP');
@@ -460,7 +539,7 @@
       }
     }
 
-    // 6. 互動式 TODO 清單 (整合 LocalStorage 儲存)
+    // 7. 📝 MEMO / TODO 清單
     let todos = JSON.parse(localStorage.getItem('my_dashboard_todos')) || [
       { text: '買 SUICA 增值', done: false },
       { text: '整理旅行清單', done: false },
@@ -514,9 +593,11 @@
     setInterval(fetchMTRData, 10000);
     
     updateClock();
+    initTripUI();
+    renderSchedules();
+    renderTodos();
     fetchHKWeather();
     fetchMTRData();
-    renderTodos();
   </script>
 </body>
 </html>
