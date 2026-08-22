@@ -388,7 +388,7 @@
 </head>
 <body class="theme-day">
 
-  <button class="theme-toggle-btn" onclick="toggleThemeManual()">🌗</button>
+  <button class="theme-toggle-btn" onclick="toggleThemeManual()">🌗 Theme</button>
 
   <div class="stars-overlay"></div>
 
@@ -766,34 +766,33 @@
       return "⛅";
     }
 
-    // 7. 港鐵 API
-    async function fetchMTRData() {
+    // 7. 港鐵 API (使用 JSONP 完美直連官方數據，解決 CORS 問題)
+    function fetchMTRData() {
       const now = new Date();
       const timeString = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}:${String(now.getSeconds()).padStart(2, '0')}`;
       document.getElementById('mtr-time').textContent = `更新 ${timeString}`;
 
-      try {
-        const targetUrl = 'https://rt.data.gov.hk/v1/transport/mtr/getSchedule.php?line=TKL&sta=LHP';
-        const proxyUrl = 'https://api.allorigins.win/get?url=' + encodeURIComponent(targetUrl);
-        
-        const response = await fetch(proxyUrl);
-        const rawData = await response.json();
-        const data = JSON.parse(rawData.contents);
+      // 清除舊腳本
+      const oldScript = document.getElementById('mtr-jsonp');
+      if (oldScript) oldScript.remove();
 
-        if (data.status === 1 && data.data && data.data['TKL-LHP']) {
+      // 全局回調函數處理即時數據
+      window.handleMTRResponse = function(data) {
+        if (data && data.status === 1 && data.data && data.data['TKL-LHP']) {
           const upSchedule = data.data['TKL-LHP'].UP || [];
           let html = '';
           
           upSchedule.slice(0, 4).forEach(item => {
             const deptTime = item.ttnt ? item.ttnt.split(' ')[1].substring(0, 5) : '--:--';
-            const destMap = { 'TIK': '調景嶺', 'NOP': '北角', 'POA': '寶琳' };
+            const destMap = { 'TIK': '調景嶺', 'NOP': '北角', 'POA': '寶琳', 'LHP': '康城' };
             const destName = destMap[item.dest] || item.dest;
-            
+            const etaMinutes = item.ttnt ? Math.max(0, Math.round((new Date(item.ttnt.replace(/-/g, '/')) - new Date()) / 60000)) : item.time;
+
             html += `
               <div class="mtr-row">
                 <span>${deptTime}</span>
                 <span>${destName}</span>
-                <span class="badge-eta">${item.time} MIN</span>
+                <span class="badge-eta">${etaMinutes} MIN</span>
               </div>
             `;
           });
@@ -803,29 +802,13 @@
             return;
           }
         }
-        throw new Error('Fallback required');
-      } catch (e) {
-        let currentHour = now.getHours();
-        let currentMin = now.getMinutes();
-        let html = '';
-        const dests = ['調景嶺', '北角', '調景嶺', '北角'];
-        const offsets = [3, 10, 17, 24];
+      };
 
-        offsets.forEach((offset, idx) => {
-          let m = currentMin + offset;
-          let h = currentHour;
-          if (m >= 60) { m -= 60; h = (h + 1) % 24; }
-          let timeFmt = `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}`;
-          html += `
-            <div class="mtr-row">
-              <span>${timeFmt}</span>
-              <span>${dests[idx]}</span>
-              <span class="badge-eta">${offset} MIN</span>
-            </div>
-          `;
-        });
-        document.getElementById('mtr-data').innerHTML = html;
-      }
+      // 插入 JSONP 動態腳本
+      const script = document.createElement('script');
+      script.id = 'mtr-jsonp';
+      script.src = 'https://rt.data.gov.hk/v1/transport/mtr/getSchedule.php?line=TKL&sta=LHP&callback=handleMTRResponse';
+      document.body.appendChild(script);
     }
 
     // 8. 載入隨機貓咪照片
