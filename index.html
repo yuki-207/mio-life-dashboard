@@ -29,16 +29,16 @@
       --badge-text: #FFFFFF;
     }
 
-    /* 🎂 2月7日 澪 專屬生日主題 */
+    /* 🎂 2月7日 澪 專屬生日主題 (深邃暗金慶典風) */
     body.theme-birthday {
-      --bg-gradient: linear-gradient(135deg, #ff9a9e 0%, #fecfef 50%, #feada6 100%);
-      --card-bg: rgba(255, 255, 255, 0.88);
-      --card-border: rgba(255, 182, 193, 0.6);
-      --text-main: #4a1525;
-      --text-sub: #8a4b5d;
-      --accent: #e84393;
-      --badge-bg: #fd79a8;
-      --badge-text: #FFFFFF;
+      --bg-gradient: linear-gradient(135deg, #1a0b2e 0%, #38154c 50%, #2b112c 100%);
+      --card-bg: rgba(25, 18, 38, 0.85);
+      --card-border: rgba(241, 196, 15, 0.4);
+      --text-main: #fcf3cf;
+      --text-sub: #d4ac0d;
+      --accent: #f39c12;
+      --badge-bg: #f1c40f;
+      --badge-text: #1a0b2e;
     }
 
     /* 🎋 端午節主題 (竹葉翠綠) */
@@ -152,7 +152,7 @@
       z-index: 0;
     }
 
-    body.theme-night .stars-overlay, body.theme-midautumn .stars-overlay {
+    body.theme-night .stars-overlay, body.theme-midautumn .stars-overlay, body.theme-birthday .stars-overlay {
       opacity: 0.95;
     }
 
@@ -388,7 +388,7 @@
 </head>
 <body class="theme-day">
 
-  <button class="theme-toggle-btn" onclick="toggleThemeManual()">🌗 Theme</button>
+  <button class="theme-toggle-btn" onclick="toggleThemeManual()">🌗</button>
 
   <div class="stars-overlay"></div>
 
@@ -511,7 +511,7 @@
       calcCountdown();
     }
 
-    // 手動測試切換主題 (日間 -> 夜間 -> 🎂生日 -> 🎋端午 -> 🌕中秋 -> 🧧新年 -> 🎃萬聖節 -> 🎄聖誕)
+    // 手動測試切換主題
     let isManualTheme = false;
     const themesList = ['theme-day', 'theme-night', 'theme-birthday', 'theme-duanwu', 'theme-midautumn', 'theme-cny', 'theme-halloween', 'theme-xmas'];
     let themeIndex = 0;
@@ -639,7 +639,7 @@
       document.getElementById('cal-status').textContent = '本地備用行程';
     }
 
-    // 4. 自動主題與節日判斷 (含農曆端午與中秋年度對照)
+    // 4. 自動主題與節日判斷
     function handleTheme(now) {
       const year = now.getFullYear();
       const month = now.getMonth() + 1;
@@ -650,11 +650,8 @@
 
       body.className = '';
 
-      // 端午節對照表 (2026-2030)
       const duanwuDates = { 2026: '6-19', 2027: '6-9', 2028: '5-28', 2029: '6-16', 2030: '6-5' };
-      // 中秋節對照表 (2026-2030)
       const midautumnDates = { 2026: '9-25', 2027: '9-15', 2028: '10-3', 2029: '9-22', 2030: '9-12' };
-
       const currentDateStr = `${month}-${date}`;
 
       // 🎂 2月7日 澪 的生日
