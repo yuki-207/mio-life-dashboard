@@ -243,6 +243,14 @@
       font-weight: 600;
     }
 
+    .lunar-display {
+      font-size: 0.75rem;
+      color: var(--text-sub);
+      margin-top: 2px;
+      font-weight: 500;
+      opacity: 0.9;
+    }
+
     .greeting {
       font-size: 0.8rem;
       color: var(--text-sub);
@@ -400,6 +408,7 @@
           <div class="greeting" id="user-greeting">こんにちは, 澪。</div>
           <div class="time-display" id="clock">10:58</div>
           <div class="date-display" id="date-str">SAT · 22 AUG 2026</div>
+          <div class="lunar-display" id="lunar-str">農曆 丙午年 七月初十</div>
           <div class="greeting" id="user-quote">接受每一個不完美的人，包括自己。</div>
           
           <div class="london-sub-box">
@@ -489,6 +498,30 @@
   </div>
 
   <script>
+    // 原生 JavaScript 農曆轉換工具
+    function getLunarDateString(date) {
+      try {
+        const formatter = new Intl.DateTimeFormat('zh-HK-u-ca-chinese', {
+          year: 'numeric',
+          month: 'long',
+          day: 'numeric'
+        });
+        const parts = formatter.formatToParts(date);
+        let year = '', month = '', day = '';
+        
+        parts.forEach(p => {
+          if (p.type === 'relatedYear' || p.type === 'year') year = p.value;
+          if (p.type === 'month') month = p.value;
+          if (p.type === 'day') day = p.value;
+        });
+
+        // 格式化輸出
+        return `農曆 ${year}年 ${month}${day}`;
+      } catch (e) {
+        return '';
+      }
+    }
+
     // 1. 時鐘與日期更新
     function updateClock() {
       const now = new Date();
@@ -499,6 +532,9 @@
       const options = { weekday: 'short', day: 'numeric', month: 'short', year: 'numeric' };
       document.getElementById('date-str').textContent = now.toLocaleDateString('en-GB', options).toUpperCase().replace(',', ' ·');
       
+      // 更新農曆顯示
+      document.getElementById('lunar-str').textContent = getLunarDateString(now);
+
       const londonTime = new Date(now.toLocaleString("en-US", {timeZone: "Europe/London"}));
       const lHours = String(londonTime.getHours()).padStart(2, '0');
       const lMinutes = String(londonTime.getMinutes()).padStart(2, '0');
@@ -763,13 +799,12 @@
       return "⛅";
     }
 
-    // 7. 港鐵康城站專屬實時數據（對齊官方數據，無快取延遲）
+    // 7. 港鐵康城站專屬實時數據
     async function fetchMTRData() {
       const now = new Date();
       const timeString = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}:${String(now.getSeconds()).padStart(2, '0')}`;
       document.getElementById('mtr-time').textContent = `更新 ${timeString}`;
 
-      // 加上 timestamp 防止跨域代理伺服器 Cache 舊數據
       const rawApi = 'https://rt.data.gov.hk/v1/transport/mtr/getSchedule.php?line=TKL&sta=LHP';
       const proxyApi = 'https://corsproxy.io/?' + encodeURIComponent(rawApi) + '&_t=' + now.getTime();
 
@@ -782,30 +817,24 @@
           if (upSchedule.length > 0) {
             let html = '';
             upSchedule.slice(0, 4).forEach(item => {
-              // 1. 純文字擷取 HH:mm，避免 Date 物件解析時區出錯
               let displayTime = '--:--';
               if (item.time) {
                 const timeMatches = item.time.match(/\d{2}:\d{2}/);
                 if (timeMatches) displayTime = timeMatches[0];
               }
 
-              // 2. 優先採用港鐵官方回傳的 ttnt 分鐘數
               let etaMin = '--';
               if (item.ttnt !== undefined && item.ttnt !== null) {
                 etaMin = item.ttnt;
               } else if (item.time) {
-                // 若無 ttnt，則使用時間戳記精確比對
                 const trainTime = new Date(item.time.replace(/-/g, '/'));
                 etaMin = Math.max(0, Math.floor((trainTime.getTime() - now.getTime()) / 60000));
               }
 
-              const destMap = { 'TIK': '調景嶺', 'NOP': '北角', 'POA': '寶琳', 'LHP': '康城' };
-              const destName = destMap[item.dest] || '調景嶺';
-
               html += `
                 <div class="mtr-row">
                   <span>${displayTime}</span>
-                  <span>${destName}</span>
+                  <span>調景嶺</span>
                   <span class="badge-eta">${etaMin} MIN</span>
                 </div>
               `;
@@ -818,18 +847,17 @@
           }
         }
       } catch (e) {
-        console.log("港鐵數據載入異常", e);
+        console.log("港鐵數據載入受阻，啟用康城站專屬 9 分鐘頻率運算", e);
       }
 
-      // 網絡失敗時的備用邏輯
-      renderDynamicFallbackMTR(now);
+      renderLOHASParkFallback(now);
     }
 
-    function renderDynamicFallbackMTR(now) {
+    function renderLOHASParkFallback(now) {
       let currentHour = now.getHours();
       let currentMin = now.getMinutes();
       let html = '';
-      const offsets = [4, 12, 21, 30];
+      const offsets = [4, 13, 22, 31];
 
       offsets.forEach((offset) => {
         let m = currentMin + offset;
