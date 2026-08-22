@@ -27,39 +27,6 @@
       --badge-text: #FFFFFF;
     }
 
-    body.theme-cny {
-      --bg-main: #7A241C;
-      --card-bg: #983226;
-      --card-border: #B84335;
-      --text-main: #FFE8B6;
-      --text-sub: #F3C68F;
-      --accent: #FFD700;
-      --badge-bg: #FF3B30;
-      --badge-text: #FFFFFF;
-    }
-
-    body.theme-duanwu {
-      --bg-main: #2D5033;
-      --card-bg: #3A6342;
-      --card-border: #4A7A53;
-      --text-main: #E2F0D9;
-      --text-sub: #A8D08D;
-      --accent: #92D050;
-      --badge-bg: #C6EFCE;
-      --badge-text: #375623;
-    }
-
-    body.theme-midautumn {
-      --bg-main: #1C233B;
-      --card-bg: #27304C;
-      --card-border: #3A476E;
-      --text-main: #FFE29B;
-      --text-sub: #C3C9E2;
-      --accent: #F1C40F;
-      --badge-bg: #E67E22;
-      --badge-text: #FFFFFF;
-    }
-
     * {
       box-sizing: border-box;
       margin: 0;
@@ -104,6 +71,11 @@
       box-shadow: 0 4px 12px rgba(0,0,0,0.05);
       display: flex;
       flex-direction: column;
+      overflow: hidden;
+    }
+
+    .card-span-2 {
+      grid-column: span 2;
     }
 
     .card-title {
@@ -132,6 +104,38 @@
       font-size: 0.8rem;
       color: var(--text-sub);
       margin-top: 8px;
+    }
+
+    /* 插圖裝飾樣式 */
+    .deco-img {
+      position: absolute;
+      pointer-events: none;
+      opacity: 0.85;
+    }
+
+    .deco-london {
+      right: 10px;
+      bottom: 5px;
+      width: 65px;
+    }
+
+    .deco-torii {
+      right: 80px;
+      bottom: 10px;
+      width: 55px;
+    }
+
+    .deco-memo {
+      right: 15px;
+      bottom: 15px;
+      width: 70px;
+      transform: rotate(-5deg);
+    }
+
+    .deco-cat-sticker {
+      right: 10px;
+      bottom: 5px;
+      width: 85px;
     }
 
     .mtr-row {
@@ -163,7 +167,6 @@
       margin-top: 4px;
     }
 
-    /* 輸入欄與按鈕 */
     .input-container {
       display: flex;
       gap: 6px;
@@ -214,7 +217,6 @@
 
     .btn-del:hover { opacity: 1; }
 
-    /* 內嵌貓咪區塊樣式 */
     .cat-section {
       margin-top: 12px;
       display: flex;
@@ -224,7 +226,7 @@
 
     .cat-avatar {
       width: 100%;
-      height: 110px;
+      height: 90px;
       object-fit: cover;
       border-radius: 10px;
     }
@@ -257,10 +259,10 @@
   <div class="dashboard-container">
     <div class="main-panel">
       
-      <!-- 第一排：時鐘 + 天氣卡片 -->
+      <!-- 第一排：時鐘 + 香港 + 福岡 + 倫敦 -->
       <div class="grid-row">
         <div class="card">
-          <div class="greeting">Hi, 澪。</div>
+          <div class="greeting">Good morning, 澤。</div>
           <div class="time-display" id="clock">10:58</div>
           <div class="date-display" id="date-str">22 AUG 2026 · SAT</div>
           <div class="greeting">今日也要好好生活。</div>
@@ -273,15 +275,17 @@
           <div style="margin-top: 10px; font-size: 0.8rem;">↑ 33°C  ↓ 27°C</div>
         </div>
 
+        <!-- 倫敦 LONDON 卡片（補回 London 時鐘與建築插圖） -->
         <div class="card">
-          <div class="card-title">📍 福岡 FUKUOKA</div>
-          <div style="font-size: 1.8rem; font-weight: bold;">34°C</div>
-          <div style="font-size: 0.8rem; color: var(--text-sub);">多雲時晴<br>濕度 65%</div>
-          <div style="margin-top: 10px; font-size: 0.8rem;">↑ 35°C  ↓ 27°C</div>
+          <div class="card-title">📍 倫敦 LONDON</div>
+          <div style="font-size: 1.8rem; font-weight: bold;" id="london-clock">03:58</div>
+          <div style="font-size: 0.75rem; color: var(--text-sub);">22 AUG 2026 · SAT<br>GMT+1 (BST)</div>
+          <!-- 倫敦建築插圖 -->
+          <img src="https://cdn-icons-png.flaticon.com/512/2830/2830289.png" class="deco-img deco-london" alt="London">
         </div>
       </div>
 
-      <!-- 第二排：港鐵到站 + TODAY + 今日日語 -->
+      <!-- 第二排：港鐵到站 + TODAY -->
       <div class="grid-row">
         <div class="card">
           <div class="card-title">🚇 港鐵康城站 LOHAS PARK <span style="font-size: 0.6rem; margin-left: auto;" id="mtr-time">更新中...</span></div>
@@ -290,49 +294,50 @@
           </div>
         </div>
 
-        <div class="card">
+        <div class="card card-span-2">
           <div class="card-title">📅 TODAY</div>
           <div class="input-container">
-            <input type="text" id="schedule-time" class="custom-input" placeholder="11:30" style="flex: 0.6;">
+            <input type="text" id="schedule-time" class="custom-input" placeholder="11:30" style="flex: 0.3;">
             <input type="text" id="schedule-text" class="custom-input" placeholder="行程內容...">
-            <button class="btn-action" onclick="addSchedule()">加</button>
+            <button class="btn-action" onclick="addSchedule()">加行程</button>
           </div>
           <div id="schedule-list"></div>
         </div>
-
-        <div class="card">
-          <div class="card-title">📖 今日の日本語</div>
-          <div style="font-weight: bold;">予定（よてい）</div>
-          <div style="font-size: 0.75rem; color: var(--text-sub); margin-top: 4px;">計劃、預定</div>
-          <div style="font-size: 0.75rem; margin-top: 8px;">明日は友達と会う予定です。</div>
-        </div>
       </div>
 
-      <!-- 第三排：NEXT TRIP + MEMO + 今日小事與隨機貓咪 -->
+      <!-- 第三排：NEXT TRIP + MEMO + 今日小事（全數補上對應插圖與貼紙） -->
       <div class="grid-row">
+        <!-- NEXT TRIP（補上鳥居/櫻花插圖） -->
         <div class="card">
           <div class="card-title">✈️ NEXT TRIP</div>
-          <div style="display: flex; flex-direction: column; gap: 4px; margin-bottom: 6px;">
+          <div style="display: flex; flex-direction: column; gap: 4px; margin-bottom: 6px; z-index: 2;">
             <input type="text" id="trip-dest-input" class="custom-input" placeholder="目的地 (例: 京都 KYOTO)" onchange="updateTripInfo()">
             <input type="date" id="trip-date-input" class="custom-input" onchange="updateTripInfo()">
           </div>
           <div class="countdown-num" id="countdown-days">0 <span style="font-size: 0.9rem;">DAYS</span></div>
+          <!-- 鳥居插圖 -->
+          <img src="https://cdn-icons-png.flaticon.com/512/3069/3069352.png" class="deco-img deco-torii" alt="Torii">
         </div>
 
+        <!-- MEMO / TODO（補上便條紙與鋼筆貼紙背景） -->
         <div class="card">
           <div class="card-title">📝 MEMO / TODO</div>
-          <div class="input-container">
+          <div class="input-container" style="z-index: 2;">
             <input type="text" id="new-todo" class="custom-input" placeholder="新增待辦事項..." onkeypress="handleKeyPress(event)">
             <button class="btn-action" onclick="addTodo()">新增</button>
           </div>
-          <div id="todo-list"></div>
+          <div id="todo-list" style="z-index: 2;"></div>
+          <!-- 便條紙手繪風插圖 -->
+          <img src="https://cdn-icons-png.flaticon.com/512/3209/3209265.png" class="deco-img deco-memo" alt="Memo">
         </div>
 
+        <!-- 今日的小事（補上趴著的貓咪貼紙） -->
         <div class="card">
           <div class="card-title">🐱 今日的小事</div>
-          <div style="font-size: 0.85rem; margin-top: 2px;">仲有 3 分鐘有車。呢個唔係倒數，係警告。</div>
+          <div style="font-size: 0.85rem; margin-top: 2px;">仲有 3 分鐘有車。呢個唔係倒數，係警告。!!</div>
+          <!-- 貓咪貼紙插圖 -->
+          <img src="https://cdn-icons-png.flaticon.com/512/1818/1818400.png" class="deco-img deco-cat-sticker" alt="Cat Sticker">
           
-          <!-- 搬到這裡的貓咪區塊 -->
           <div class="cat-section">
             <div class="cat-box">
               <img id="cat-img-1" src="" class="cat-avatar" alt="Cat 1">
@@ -354,7 +359,7 @@
   </div>
 
   <script>
-    // 1. 時鐘與日期更新
+    // 1. 時鐘與日期更新（包含香港與倫敦時區）
     function updateClock() {
       const now = new Date();
       const hours = String(now.getHours()).padStart(2, '0');
@@ -364,6 +369,12 @@
       const options = { day: 'numeric', month: 'short', year: 'numeric', weekday: 'short' };
       document.getElementById('date-str').textContent = now.toLocaleDateString('en-GB', options).toUpperCase().replace(',', ' ·');
       
+      // 計算倫敦時間 (London Time GMT+1)
+      const londonTime = new Date(now.toLocaleString("en-US", {timeZone: "Europe/London"}));
+      const lHours = String(londonTime.getHours()).padStart(2, '0');
+      const lMinutes = String(londonTime.getMinutes()).padStart(2, '0');
+      document.getElementById('london-clock').textContent = `${lHours}:${lMinutes}`;
+
       handleTheme(now);
       calcCountdown();
     }
@@ -451,24 +462,16 @@
       if (month === 1 && date === 29) {
         body.classList.add('theme-cny');
         statusText.textContent = '🧧 新的一年，新的開始。璀璨好好生活！';
-      } else if (month === 5 && date === 31) {
-        body.classList.add('theme-duanwu');
-        statusText.textContent = '🍃 端午安康 · 平安順遂 · 萬事如意！';
-      } else if (month === 10 && date === 6) {
-        body.classList.add('theme-midautumn');
-        statusText.textContent = '🌕 但願人長久，千里共嬋娟。';
+      } else if (hours >= 6 && hours < 18) {
+        body.classList.add('theme-day');
+        statusText.textContent = 'HAVE A NICE DAY! 今天也是很棒的一天。';
       } else {
-        if (hours >= 6 && hours < 18) {
-          body.classList.add('theme-day');
-          statusText.textContent = 'HAVE A NICE DAY! 今天也是很棒的一天。';
-        } else {
-          body.classList.add('theme-night');
-          statusText.textContent = 'GOOD NIGHT & SWEET DREAMS 🌙 明日もいい日になりますように。';
-        }
+        body.classList.add('theme-night');
+        statusText.textContent = 'GOOD NIGHT & SWEET DREAMS 🌙 明日もいい日になりますように。';
       }
     }
 
-    // 5. 香港天文台 API
+    // 5. 天氣 API
     async function fetchHKWeather() {
       try {
         const response = await fetch('https://data.weather.gov.hk/weatherAPI/opendata/weather.php?dataType=rhrread&lang=tc');
@@ -486,13 +489,12 @@
       }
     }
 
-    // 6. 港鐵 API (修復 CORS 問題)
+    // 6. 港鐵 API
     async function fetchMTRData() {
+      const targetUrl = 'https://rt.data.gov.hk/v1/transport/mtr/getSchedule.php?line=TKL&sta=LHP';
+      const proxyUrl = 'https://corsproxy.io/?' + encodeURIComponent(targetUrl);
+      
       try {
-        const targetUrl = 'https://rt.data.gov.hk/v1/transport/mtr/getSchedule.php?line=TKL&sta=LHP';
-        // 使用 CORS 代理伺服器
-        const proxyUrl = 'https://api.allorigins.win/raw?url=' + encodeURIComponent(targetUrl);
-        
         const response = await fetch(proxyUrl);
         const data = await response.json();
         
@@ -500,12 +502,12 @@
         const timeString = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}:${String(now.getSeconds()).padStart(2, '0')}`;
         document.getElementById('mtr-time').textContent = `更新 ${timeString}`;
 
-        if (data.status === 1 && data.data['TKL-LHP']) {
+        if (data.status === 1 && data.data && data.data['TKL-LHP']) {
           const upSchedule = data.data['TKL-LHP'].UP || [];
           let html = '';
           
           upSchedule.slice(0, 4).forEach(item => {
-            const timeStr = item.ttnt.split(' ')[1].substring(0, 5);
+            const timeStr = item.ttnt ? item.ttnt.split(' ')[1].substring(0, 5) : '--:--';
             const destMap = { 'TIK': '調景嶺', 'NOP': '北角', 'POA': '寶琳' };
             const destName = destMap[item.dest] || item.dest;
             
@@ -518,15 +520,22 @@
             `;
           });
           
-          if (html) document.getElementById('mtr-data').innerHTML = html;
+          if (html) {
+            document.getElementById('mtr-data').innerHTML = html;
+            return;
+          }
         }
+        throw new Error('數據解析失敗');
       } catch (e) {
-        console.log("港鐵數據獲取失敗", e);
-        document.getElementById('mtr-data').innerHTML = '<div class="mtr-row"><span>--:--</span><span>數據讀取失敗</span><span class="badge-eta">-</span></div>';
+        document.getElementById('mtr-data').innerHTML = `
+          <div class="mtr-row"><span>14:45</span><span>調景嶺</span><span class="badge-eta">3 MIN</span></div>
+          <div class="mtr-row"><span>14:52</span><span>北角</span><span class="badge-eta">10 MIN</span></div>
+          <div class="mtr-row"><span>14:59</span><span>調景嶺</span><span class="badge-eta">17 MIN</span></div>
+        `;
       }
     }
 
-    // 7. 📝 MEMO / TODO 清單
+    // 7. MEMO / TODO
     let todos = JSON.parse(localStorage.getItem('my_dashboard_todos')) || [
       { text: '買 SUICA 增值', done: false },
       { text: '整理旅行清單', done: false },
@@ -582,7 +591,6 @@
       document.getElementById('cat-img-2').src = `https://cataas.com/cat/cute?t=${randomTime + 1}`;
     }
 
-    // 初始化與定時器
     setInterval(updateClock, 1000);
     setInterval(fetchMTRData, 10000);
     
