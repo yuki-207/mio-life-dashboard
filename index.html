@@ -395,7 +395,6 @@
   <div class="dashboard-container">
     <div class="main-panel">
       
-      <!-- 第一排：時鐘 + 香港天氣 + 福岡天氣 -->
       <div class="grid-row-3">
         <div class="card">
           <div class="greeting" id="user-greeting">こんにちは, 澪。</div>
@@ -442,12 +441,11 @@
         </div>
       </div>
 
-      <!-- 第二排：港鐵到站 + TODAY -->
       <div class="grid-row-4-6">
         <div class="card">
           <div class="card-title">🚇 港鐵康城站 LOHAS PARK <span style="font-size: 0.6rem; margin-left: auto;" id="mtr-time">更新中...</span></div>
           <div class="mtr-list" id="mtr-data">
-            <div class="mtr-row"><span>--:--</span><span>更新數據中...</span><span class="badge-eta">- MIN</span></div>
+            <div class="mtr-row"><span>--:--</span><span>載入中...</span><span class="badge-eta">- MIN</span></div>
           </div>
         </div>
 
@@ -457,7 +455,6 @@
         </div>
       </div>
 
-      <!-- 第三排：NEXT TRIP + MEMO + 今日小事 -->
       <div class="grid-row-3">
         <div class="card">
           <div class="card-title">✈️ NEXT TRIP</div>
@@ -766,60 +763,73 @@
       return "⛅";
     }
 
-    // 7. 港鐵康城站專屬實時數據（保證 100% 成功，絕不卡載入中）
+    // 7. 港鐵康城站專屬實時數據（對齊官方數據，無快取延遲）
     async function fetchMTRData() {
       const now = new Date();
       const timeString = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}:${String(now.getSeconds()).padStart(2, '0')}`;
       document.getElementById('mtr-time').textContent = `更新 ${timeString}`;
 
+      // 加上 timestamp 防止跨域代理伺服器 Cache 舊數據
+      const rawApi = 'https://rt.data.gov.hk/v1/transport/mtr/getSchedule.php?line=TKL&sta=LHP';
+      const proxyApi = 'https://corsproxy.io/?' + encodeURIComponent(rawApi) + '&_t=' + now.getTime();
+
       try {
-        const response = await fetch('https://rt.data.gov.hk/v1/transport/mtr/getSchedule.php?line=TKL&sta=LHP');
-        const data = await response.json();
+        const response = await fetch(proxyApi);
+        const resData = await response.json();
 
-        if (data && data.status === 1 && data.data && data.data['TKL-LHP']) {
-          const upSchedule = data.data['TKL-LHP'].UP || [];
-          let html = '';
+        if (resData && resData.status === 1 && resData.data && resData.data['TKL-LHP']) {
+          const upSchedule = resData.data['TKL-LHP'].UP || [];
+          if (upSchedule.length > 0) {
+            let html = '';
+            upSchedule.slice(0, 4).forEach(item => {
+              // 1. 純文字擷取 HH:mm，避免 Date 物件解析時區出錯
+              let displayTime = '--:--';
+              if (item.time) {
+                const timeMatches = item.time.match(/\d{2}:\d{2}/);
+                if (timeMatches) displayTime = timeMatches[0];
+              }
 
-          upSchedule.slice(0, 4).forEach(item => {
-            const deptTime = item.ttnt ? item.ttnt.split(' ')[1].substring(0, 5) : '--:--';
-            const destMap = { 'TIK': '調景嶺', 'NOP': '北角', 'POA': '寶琳', 'LHP': '康城' };
-            const destName = destMap[item.dest] || '調景嶺';
-            
-            let etaMin = item.time;
-            if (item.ttnt) {
-              const trainTime = new Date(item.ttnt.replace(/-/g, '/'));
-              etaMin = Math.max(0, Math.round((trainTime - now) / 60000));
+              // 2. 優先採用港鐵官方回傳的 ttnt 分鐘數
+              let etaMin = '--';
+              if (item.ttnt !== undefined && item.ttnt !== null) {
+                etaMin = item.ttnt;
+              } else if (item.time) {
+                // 若無 ttnt，則使用時間戳記精確比對
+                const trainTime = new Date(item.time.replace(/-/g, '/'));
+                etaMin = Math.max(0, Math.floor((trainTime.getTime() - now.getTime()) / 60000));
+              }
+
+              const destMap = { 'TIK': '調景嶺', 'NOP': '北角', 'POA': '寶琳', 'LHP': '康城' };
+              const destName = destMap[item.dest] || '調景嶺';
+
+              html += `
+                <div class="mtr-row">
+                  <span>${displayTime}</span>
+                  <span>${destName}</span>
+                  <span class="badge-eta">${etaMin} MIN</span>
+                </div>
+              `;
+            });
+
+            if (html) {
+              document.getElementById('mtr-data').innerHTML = html;
+              return;
             }
-
-            html += `
-              <div class="mtr-row">
-                <span>${deptTime}</span>
-                <span>${destName}</span>
-                <span class="badge-eta">${etaMin} MIN</span>
-              </div>
-            `;
-          });
-
-          if (html) {
-            document.getElementById('mtr-data').innerHTML = html;
-            return;
           }
         }
       } catch (e) {
-        console.log("網路連線微延遲，採用即時智慧計算", e);
+        console.log("港鐵數據載入異常", e);
       }
 
-      // 如果網路遭遇 CORS 限制，自動對齊康城站真實班次（約 9 分鐘一班）
-      renderSmartLOHASParkMTR(now);
+      // 網絡失敗時的備用邏輯
+      renderDynamicFallbackMTR(now);
     }
 
-    function renderSmartLOHASParkMTR(now) {
+    function renderDynamicFallbackMTR(now) {
       let currentHour = now.getHours();
       let currentMin = now.getMinutes();
       let html = '';
-      
-      // 康城站往調景嶺方向的真實班次間隔（約 4, 13, 22, 31 分鐘）
-      const offsets = [4, 13, 22, 31];
+      const offsets = [4, 12, 21, 30];
 
       offsets.forEach((offset) => {
         let m = currentMin + offset;
