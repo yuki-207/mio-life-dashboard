@@ -56,15 +56,17 @@
       gap: 15px;
     }
 
-    .grid-row-4 {
-      display: grid;
-      grid-template-columns: 1.2fr 1fr 1fr 1fr;
-      gap: 15px;
-    }
-
+    /* 三欄平均網格 (第一排 & 第三排) */
     .grid-row-3 {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
+      gap: 15px;
+    }
+
+    /* 4:6 比例網格 (第二排) */
+    .grid-row-4-6 {
+      display: grid;
+      grid-template-columns: 4fr 6fr;
       gap: 15px;
     }
 
@@ -77,10 +79,6 @@
       box-shadow: 0 4px 12px rgba(0,0,0,0.05);
       display: flex;
       flex-direction: column;
-    }
-
-    .card-span-2 {
-      grid-column: span 2;
     }
 
     .card-title {
@@ -108,7 +106,28 @@
     .greeting {
       font-size: 0.8rem;
       color: var(--text-sub);
-      margin-top: 8px;
+      margin-top: 6px;
+    }
+
+    /* 倫敦時間內嵌小區塊 */
+    .london-sub-box {
+      margin-top: 10px;
+      padding-top: 8px;
+      border-top: 1px dashed var(--card-border);
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+    }
+
+    .london-time {
+      font-size: 1.2rem;
+      font-weight: bold;
+      color: var(--text-main);
+    }
+
+    .london-label {
+      font-size: 0.75rem;
+      color: var(--text-sub);
     }
 
     .mtr-row {
@@ -190,34 +209,23 @@
 
     .btn-del:hover { opacity: 1; }
 
-    /* 去背貼紙貓咪專用樣式 */
     .diecut-cat-container {
       display: flex;
       justify-content: space-around;
       align-items: flex-end;
       margin-top: auto;
-      padding-top: 10px;
-    }
-
-    .diecut-cat-box {
-      text-align: center;
+      padding-top: 15px;
     }
 
     .diecut-cat-img {
-      height: 85px;
+      height: 95px;
       object-fit: contain;
-      filter: drop-shadow(0 4px 6px rgba(0,0,0,0.1));
+      filter: drop-shadow(0 4px 6px rgba(0,0,0,0.12));
       transition: transform 0.3s ease;
     }
 
     .diecut-cat-img:hover {
       transform: scale(1.08) rotate(-3deg);
-    }
-
-    .cat-label {
-      font-size: 0.7rem;
-      color: var(--text-sub);
-      margin-top: 2px;
     }
 
     .footer-bar {
@@ -237,38 +245,38 @@
   <div class="dashboard-container">
     <div class="main-panel">
       
-      <!-- 第一排：時鐘 (澪) + 香港 + 福岡 + 倫敦 -->
-      <div class="grid-row-4">
+      <!-- 第一排：時鐘 (香港大字 + 倫敦小字) + 香港天氣 + 福岡天氣 -->
+      <div class="grid-row-3">
         <div class="card">
           <div class="greeting">こんにちは, 澪。</div>
           <div class="time-display" id="clock">10:58</div>
           <div class="date-display" id="date-str">SAT · 22 AUG 2026</div>
           <div class="greeting">接受每一個不完美的人，包括自己。</div>
+          
+          <!-- 合併進來的倫敦時間（細字） -->
+          <div class="london-sub-box">
+            <span class="london-label">🌎 倫敦 LONDON</span>
+            <span class="london-time" id="london-clock">03:58</span>
+          </div>
         </div>
 
         <div class="card">
-          <div class="card-title">☀️🌧️☁️❄️香港 HONG KONG</div>
+          <div class="card-title"><span id="hk-icon">☀️</span> 香港 HONG KONG</div>
           <div style="font-size: 1.8rem; font-weight: bold;" id="hk-temp">--°C</div>
           <div style="font-size: 0.8rem; color: var(--text-sub);"><span id="hk-desc">載入中...</span><br>濕度 <span id="hk-humidity">--%</span></div>
           <div style="margin-top: 10px; font-size: 0.8rem;" id="hk-range">↑ --°C ↓ --°C</div>
         </div>
 
         <div class="card">
-          <div class="card-title">☀️🌧️☁️❄️ 福岡 FUKUOKA</div>
+          <div class="card-title"><span id="fuk-icon">☀️</span> 福岡 FUKUOKA</div>
           <div style="font-size: 1.8rem; font-weight: bold;" id="fuk-temp">--°C</div>
           <div style="font-size: 0.8rem; color: var(--text-sub);"><span id="fuk-desc">載入中...</span><br>濕度 <span id="fuk-humidity">--%</span></div>
           <div style="margin-top: 10px; font-size: 0.8rem;" id="fuk-range">↑ --°C ↓ --°C</div>
         </div>
-
-        <div class="card">
-          <div class="card-title">🌎 倫敦 LONDON</div>
-          <div style="font-size: 1.8rem; font-weight: bold;" id="london-clock">03:58</div>
-          <div style="font-size: 0.75rem; color: var(--text-sub); margin-top: 4px;">22 AUG 2026 · SAT<br>GMT+1 (BST)</div>
-        </div>
       </div>
 
-      <!-- 第二排：港鐵到站 + TODAY (支援 Google Calendar 自動讀取) -->
-      <div class="grid-row-3">
+      <!-- 第二排：港鐵到站 + TODAY (比例調整為 4:6) -->
+      <div class="grid-row-4-6">
         <div class="card">
           <div class="card-title">🚇 港鐵康城站 LOHAS PARK <span style="font-size: 0.6rem; margin-left: auto;" id="mtr-time">更新中...</span></div>
           <div class="mtr-list" id="mtr-data">
@@ -276,13 +284,13 @@
           </div>
         </div>
 
-        <div class="card card-span-2">
-          <div class="card-title">📅 TODAY <span style="font-size: 0.65rem; color: var(--text-sub); margin-left: auto;" id="cal-status">Google Calendar 自動同步</span></div>
+        <div class="card">
+          <div class="card-title">📅 TODAY <span style="font-size: 0.65rem; color: var(--text-sub); margin-left: auto;" id="cal-status">Google Calendar 同步中...</span></div>
           <div id="schedule-list"></div>
         </div>
       </div>
 
-      <!-- 第三排：NEXT TRIP + MEMO + 今日小事（去背貼紙貓咪） -->
+      <!-- 第三排：NEXT TRIP + MEMO + 今日小事 -->
       <div class="grid-row-3">
         <div class="card">
           <div class="card-title">✈️ NEXT TRIP</div>
@@ -306,16 +314,9 @@
           <div class="card-title">🐱 今日的小事</div>
           <div style="font-size: 0.85rem; margin-top: 2px;">仲有 3 分鐘有車。呢個唔係倒數，係警告。!!</div>
           
-          <!-- 去背 Die-cut 貓咪貼紙區域 -->
           <div class="diecut-cat-container">
-            <div class="diecut-cat-box">
-              <img src="https://cdn-icons-png.flaticon.com/512/616/616430.png" class="diecut-cat-img" alt="美短虎斑">
-              <div class="cat-label">美短虎斑</div>
-            </div>
-            <div class="diecut-cat-box">
-              <img src="https://cdn-icons-png.flaticon.com/512/1818/1818400.png" class="diecut-cat-img" alt="布偶貓">
-              <div class="cat-label">布偶貓</div>
-            </div>
+            <img src="https://cdn-icons-png.flaticon.com/512/616/616430.png" class="diecut-cat-img" alt="Cat Sticker 1">
+            <img src="https://cdn-icons-png.flaticon.com/512/1818/1818400.png" class="diecut-cat-img" alt="Cat Sticker 2">
           </div>
         </div>
       </div>
@@ -338,6 +339,7 @@
       const options = { weekday: 'short', day: 'numeric', month: 'short', year: 'numeric' };
       document.getElementById('date-str').textContent = now.toLocaleDateString('en-GB', options).toUpperCase().replace(',', ' ·');
       
+      // 計算倫敦時間
       const londonTime = new Date(now.toLocaleString("en-US", {timeZone: "Europe/London"}));
       const lHours = String(londonTime.getHours()).padStart(2, '0');
       const lMinutes = String(londonTime.getMinutes()).padStart(2, '0');
@@ -378,402 +380,15 @@
       document.getElementById('countdown-days').innerHTML = `${diffDays > 0 ? diffDays : 0} <span style="font-size: 0.9rem;">DAYS</span>`;
     }
 
-    // 3. 📅 TODAY 行程 (支援 Google Calendar iCal 自動抓取 + 本地備份)
-    const GOOGLE_ICAL_URL = ''; <!DOCTYPE html>
-<html lang="zh-HK">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Personal Life Dashboard</title>
-  <style>
-    :root {
-      --bg-main: #EAE6DF;
-      --card-bg: #F5F3EF;
-      --card-border: #D8D2C6;
-      --text-main: #333333;
-      --text-sub: #666666;
-      --accent: #B05D3A;
-      --badge-bg: #E36241;
-      --badge-text: #FFFFFF;
-    }
-
-    body.theme-night {
-      --bg-main: #141724;
-      --card-bg: #1D2136;
-      --card-border: #2A304D;
-      --text-main: #E0E6ED;
-      --text-sub: #8C99B2;
-      --accent: #5C82FF;
-      --badge-bg: #D93838;
-      --badge-text: #FFFFFF;
-    }
-
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-    }
-
-    body {
-      background-color: var(--bg-main);
-      color: var(--text-main);
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      min-height: 100vh;
-      padding: 20px;
-      transition: all 0.5s ease;
-    }
-
-    .dashboard-container {
-      max-width: 1280px;
-      width: 100%;
-    }
-
-    .main-panel {
-      display: flex;
-      flex-direction: column;
-      gap: 15px;
-    }
-
-    .grid-row-4 {
-      display: grid;
-      grid-template-columns: 1.2fr 1fr 1fr 1fr;
-      gap: 15px;
-    }
-
-    .grid-row-3 {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 15px;
-    }
-
-    .card {
-      background-color: var(--card-bg);
-      border: 1px solid var(--card-border);
-      border-radius: 16px;
-      padding: 16px;
-      position: relative;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-      display: flex;
-      flex-direction: column;
-    }
-
-    .card-span-2 {
-      grid-column: span 2;
-    }
-
-    .card-title {
-      font-size: 0.85rem;
-      color: var(--text-sub);
-      margin-bottom: 8px;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-    }
-
-    .time-display {
-      font-size: 2.8rem;
-      font-weight: 700;
-      line-height: 1;
-    }
-
-    .date-display {
-      font-size: 0.85rem;
-      color: var(--text-sub);
-      margin-top: 6px;
-      font-weight: 600;
-    }
-
-    .greeting {
-      font-size: 0.8rem;
-      color: var(--text-sub);
-      margin-top: 8px;
-    }
-
-    .mtr-row {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 6px 0;
-      border-bottom: 1px dashed var(--card-border);
-    }
-
-    .mtr-row:last-child {
-      border-bottom: none;
-    }
-
-    .badge-eta {
-      background-color: var(--badge-bg);
-      color: var(--badge-text);
-      padding: 2px 8px;
-      border-radius: 12px;
-      font-weight: bold;
-      font-size: 0.85rem;
-    }
-
-    .countdown-num {
-      font-size: 2.3rem;
-      font-weight: bold;
-      color: var(--accent);
-      text-align: right;
-      margin-top: 4px;
-    }
-
-    .input-container {
-      display: flex;
-      gap: 6px;
-      margin-bottom: 8px;
-    }
-
-    .custom-input {
-      flex: 1;
-      background: transparent;
-      border: 1px solid var(--card-border);
-      border-radius: 6px;
-      color: var(--text-main);
-      padding: 4px 8px;
-      font-size: 0.8rem;
-    }
-
-    .btn-action {
-      background: var(--accent);
-      color: white;
-      border: none;
-      border-radius: 6px;
-      padding: 4px 10px;
-      cursor: pointer;
-      font-size: 0.8rem;
-    }
-
-    .schedule-item, .todo-item {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      font-size: 0.8rem;
-      margin-bottom: 6px;
-    }
-
-    .todo-item.completed span {
-      text-decoration: line-through;
-      opacity: 0.6;
-    }
-
-    .btn-del {
-      background: none;
-      border: none;
-      color: var(--text-sub);
-      cursor: pointer;
-      font-size: 0.75rem;
-      opacity: 0.6;
-    }
-
-    .btn-del:hover { opacity: 1; }
-
-    /* 去背貼紙貓咪專用樣式 */
-    .diecut-cat-container {
-      display: flex;
-      justify-content: space-around;
-      align-items: flex-end;
-      margin-top: auto;
-      padding-top: 10px;
-    }
-
-    .diecut-cat-box {
-      text-align: center;
-    }
-
-    .diecut-cat-img {
-      height: 85px;
-      object-fit: contain;
-      filter: drop-shadow(0 4px 6px rgba(0,0,0,0.1));
-      transition: transform 0.3s ease;
-    }
-
-    .diecut-cat-img:hover {
-      transform: scale(1.08) rotate(-3deg);
-    }
-
-    .cat-label {
-      font-size: 0.7rem;
-      color: var(--text-sub);
-      margin-top: 2px;
-    }
-
-    .footer-bar {
-      margin-top: 10px;
-      text-align: center;
-      font-size: 0.8rem;
-      color: var(--text-sub);
-      padding: 8px;
-      background-color: var(--card-bg);
-      border-radius: 20px;
-      border: 1px solid var(--card-border);
-    }
-  </style>
-</head>
-<body class="theme-day">
-
-  <div class="dashboard-container">
-    <div class="main-panel">
-      
-      <!-- 第一排：時鐘 (澪) + 香港 + 福岡 + 倫敦 -->
-      <div class="grid-row-4">
-        <div class="card">
-          <div class="greeting">こんにちは, 澪。</div>
-          <div class="time-display" id="clock">10:58</div>
-          <div class="date-display" id="date-str">SAT · 22 AUG 2026</div>
-          <div class="greeting">接受每一個不完美的人，包括自己。</div>
-        </div>
-
-        <div class="card">
-          <div class="card-title">☀️🌧️☁️❄️香港 HONG KONG</div>
-          <div style="font-size: 1.8rem; font-weight: bold;" id="hk-temp">--°C</div>
-          <div style="font-size: 0.8rem; color: var(--text-sub);"><span id="hk-desc">載入中...</span><br>濕度 <span id="hk-humidity">--%</span></div>
-          <div style="margin-top: 10px; font-size: 0.8rem;" id="hk-range">↑ --°C ↓ --°C</div>
-        </div>
-
-        <div class="card">
-          <div class="card-title">☀️🌧️☁️❄️ 福岡 FUKUOKA</div>
-          <div style="font-size: 1.8rem; font-weight: bold;" id="fuk-temp">--°C</div>
-          <div style="font-size: 0.8rem; color: var(--text-sub);"><span id="fuk-desc">載入中...</span><br>濕度 <span id="fuk-humidity">--%</span></div>
-          <div style="margin-top: 10px; font-size: 0.8rem;" id="fuk-range">↑ --°C ↓ --°C</div>
-        </div>
-
-        <div class="card">
-          <div class="card-title">🌎 倫敦 LONDON</div>
-          <div style="font-size: 1.8rem; font-weight: bold;" id="london-clock">03:58</div>
-          <div style="font-size: 0.75rem; color: var(--text-sub); margin-top: 4px;">22 AUG 2026 · SAT<br>GMT+1 (BST)</div>
-        </div>
-      </div>
-
-      <!-- 第二排：港鐵到站 + TODAY (支援 Google Calendar 自動讀取) -->
-      <div class="grid-row-3">
-        <div class="card">
-          <div class="card-title">🚇 港鐵康城站 LOHAS PARK <span style="font-size: 0.6rem; margin-left: auto;" id="mtr-time">更新中...</span></div>
-          <div class="mtr-list" id="mtr-data">
-            <div class="mtr-row"><span>--:--</span><span>載入中...</span><span class="badge-eta">- MIN</span></div>
-          </div>
-        </div>
-
-        <div class="card card-span-2">
-          <div class="card-title">📅 TODAY <span style="font-size: 0.65rem; color: var(--text-sub); margin-left: auto;" id="cal-status">Google Calendar 自動同步</span></div>
-          <div id="schedule-list"></div>
-        </div>
-      </div>
-
-      <!-- 第三排：NEXT TRIP + MEMO + 今日小事（去背貼紙貓咪） -->
-      <div class="grid-row-3">
-        <div class="card">
-          <div class="card-title">✈️ NEXT TRIP</div>
-          <div style="display: flex; flex-direction: column; gap: 4px; margin-bottom: 6px;">
-            <input type="text" id="trip-dest-input" class="custom-input" placeholder="目的地 (例: 京都 KYOTO)" onchange="updateTripInfo()">
-            <input type="date" id="trip-date-input" class="custom-input" onchange="updateTripInfo()">
-          </div>
-          <div class="countdown-num" id="countdown-days">0 <span style="font-size: 0.9rem;">DAYS</span></div>
-        </div>
-
-        <div class="card">
-          <div class="card-title">📝 MEMO / TODO</div>
-          <div class="input-container">
-            <input type="text" id="new-todo" class="custom-input" placeholder="新增待辦事項..." onkeypress="handleKeyPress(event)">
-            <button class="btn-action" onclick="addTodo()">新增</button>
-          </div>
-          <div id="todo-list"></div>
-        </div>
-
-        <div class="card">
-          <div class="card-title">🐱 今日的小事</div>
-          <div style="font-size: 0.85rem; margin-top: 2px;">仲有 3 分鐘有車。呢個唔係倒數，係警告。!!</div>
-          
-          <!-- 去背 Die-cut 貓咪貼紙區域 -->
-          <div class="diecut-cat-container">
-            <div class="diecut-cat-box">
-              <img src="https://cdn-icons-png.flaticon.com/512/616/616430.png" class="diecut-cat-img" alt="美短虎斑">
-              <div class="cat-label">美短虎斑</div>
-            </div>
-            <div class="diecut-cat-box">
-              <img src="https://cdn-icons-png.flaticon.com/512/1818/1818400.png" class="diecut-cat-img" alt="布偶貓">
-              <div class="cat-label">布偶貓</div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div class="footer-bar" id="theme-status">
-        HAVE A NICE DAY! 今天也是很棒的一天。
-      </div>
-
-    </div>
-  </div>
-
-  <script>
-    // 1. 時鐘與日期更新
-    function updateClock() {
-      const now = new Date();
-      const hours = String(now.getHours()).padStart(2, '0');
-      const minutes = String(now.getMinutes()).padStart(2, '0');
-      document.getElementById('clock').textContent = `${hours}:${minutes}`;
-      
-      const options = { weekday: 'short', day: 'numeric', month: 'short', year: 'numeric' };
-      document.getElementById('date-str').textContent = now.toLocaleDateString('en-GB', options).toUpperCase().replace(',', ' ·');
-      
-      const londonTime = new Date(now.toLocaleString("en-US", {timeZone: "Europe/London"}));
-      const lHours = String(londonTime.getHours()).padStart(2, '0');
-      const lMinutes = String(londonTime.getMinutes()).padStart(2, '0');
-      document.getElementById('london-clock').textContent = `${lHours}:${lMinutes}`;
-
-      handleTheme(now);
-      calcCountdown();
-    }
-
-    // 2. ✈️ NEXT TRIP
-    let tripData = JSON.parse(localStorage.getItem('my_dashboard_trip')) || {
-      dest: '京都 KYOTO',
-      date: '2026-10-10'
-    };
-
-    function initTripUI() {
-      document.getElementById('trip-dest-input').value = tripData.dest;
-      document.getElementById('trip-date-input').value = tripData.date;
-      calcCountdown();
-    }
-
-    function updateTripInfo() {
-      tripData.dest = document.getElementById('trip-dest-input').value;
-      tripData.date = document.getElementById('trip-date-input').value;
-      localStorage.setItem('my_dashboard_trip', JSON.stringify(tripData));
-      calcCountdown();
-    }
-
-    function calcCountdown() {
-      if (!tripData.date) {
-        document.getElementById('countdown-days').innerHTML = `-- <span style="font-size: 0.9rem;">DAYS</span>`;
-        return;
-      }
-      const now = new Date();
-      const targetDate = new Date(tripData.date + 'T00:00:00');
-      const diffTime = targetDate - now;
-      const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-      document.getElementById('countdown-days').innerHTML = `${diffDays > 0 ? diffDays : 0} <span style="font-size: 0.9rem;">DAYS</span>`;
-    }
-
-    // 3. 📅 TODAY 行程 (支援 Google Calendar iCal 自動抓取 + 本地備份)
-    const GOOGLE_ICAL_URL = ''; // 👈 將你 Google 日曆的 iCal 秘密網址貼在此處
+    // 3. 📅 TODAY 行程 (Google Calendar 自動同步)
+    const GOOGLE_ICAL_URL = 'https://calendar.google.com/calendar/ical/0207ncl%40gmail.com/public/basic.ics';
 
     async function fetchGoogleCalendar() {
-      if (!GOOGLE_ICAL_URL) {
-        renderLocalSchedules();
-        return;
-      }
-
       try {
         const proxyUrl = 'https://corsproxy.io/?' + encodeURIComponent(GOOGLE_ICAL_URL);
         const response = await fetch(proxyUrl);
         const icalText = await response.text();
 
-        // 簡單解析 iCal 格式的 SUMMARY 與 DTSTART
         const events = [];
         const lines = icalText.split('\n');
         let currentEvent = {};
@@ -796,21 +411,23 @@
           }
         });
 
+        const container = document.getElementById('schedule-list');
+        container.innerHTML = '';
+
         if (events.length > 0) {
-          const container = document.getElementById('schedule-list');
-          container.innerHTML = '';
           events.slice(0, 5).forEach(item => {
             const div = document.createElement('div');
             div.className = 'schedule-item';
-            div.innerHTML = `<span><b>${item.time || '--:--'}</b> ${item.title}</span>`;
+            div.innerHTML = `<span><b>${item.time || '全天'}</b> ${item.title}</span>`;
             container.appendChild(div);
           });
-          document.getElementById('cal-status').textContent = '已同步 Google 日曆';
+          document.getElementById('cal-status').textContent = '已即時同步 Google Calendar';
         } else {
-          renderLocalSchedules();
+          container.innerHTML = '<div style="font-size:0.8rem; color:var(--text-sub);">今日暫無 Calendar 行程</div>';
+          document.getElementById('cal-status').textContent = 'Google Calendar (今日無行程)';
         }
       } catch (e) {
-        console.log("Google Calendar 讀取失敗，改用預設行程", e);
+        console.log("Google Calendar 讀取失敗", e);
         renderLocalSchedules();
       }
     }
@@ -831,6 +448,7 @@
         div.innerHTML = `<span><b>${item.time}</b> ${item.text}</span>`;
         container.appendChild(div);
       });
+      document.getElementById('cal-status').textContent = '本地備用行程';
     }
 
     // 4. 主題切換邏輯
@@ -855,7 +473,7 @@
       }
     }
 
-    // 5. 香港實時天氣 API
+    // 5. 香港天氣 API
     async function fetchHKWeather() {
       try {
         const response = await fetch('https://data.weather.gov.hk/weatherAPI/opendata/weather.php?dataType=rhrread&lang=tc');
@@ -868,14 +486,21 @@
         if(data.humidity && data.humidity.data) {
           document.getElementById('hk-humidity').textContent = `${data.humidity.data[0].value}%`;
         }
-        document.getElementById('hk-desc').textContent = "間中有雨";
+
+        let descText = "多雲";
+        if (data.rainfall && data.rainfall.data && data.rainfall.data[0].max > 0) {
+          descText = "有雨";
+        }
+        document.getElementById('hk-desc').textContent = descText;
         document.getElementById('hk-range').textContent = "↑ 33°C ↓ 27°C";
+        document.getElementById('hk-icon').textContent = getWeatherIcon(descText);
+
       } catch (e) {
         console.log("香港天氣獲取失敗", e);
       }
     }
 
-    // 6. 福岡實時天氣 API
+    // 6. 福岡天氣 API
     async function fetchFukuokaWeather() {
       try {
         const url = 'https://api.open-meteo.com/v1/forecast?latitude=33.5902&longitude=130.4017&current=temperature_2m,relative_humidity_2m,weather_code&daily=temperature_2m_max,temperature_2m_min&timezone=Asia%2FTokyo';
@@ -888,11 +513,16 @@
           
           const code = data.current.weather_code;
           let desc = "多雲時晴";
+          
           if (code === 0) desc = "晴朗無雲";
-          else if (code >= 1 && code <= 3) desc = "多雲時晴";
+          else if (code >= 1 && code <= 3) desc = "多雲";
+          else if (code >= 45 && code <= 48) desc = "有霧";
           else if (code >= 51 && code <= 67) desc = "有雨";
           else if (code >= 80 && code <= 82) desc = "陣雨";
+          else if (code >= 95) desc = "雷暴";
+          
           document.getElementById('fuk-desc').textContent = desc;
+          document.getElementById('fuk-icon').textContent = getWeatherIcon(desc, code);
         }
 
         if(data.daily) {
@@ -905,255 +535,23 @@
       }
     }
 
-    // 7. 港鐵 API
-    async function fetchMTRData() {
-      const targetUrl = 'https://rt.data.gov.hk/v1/transport/mtr/getSchedule.php?line=TKL&sta=LHP';
-      const proxyUrl = 'https://corsproxy.io/?' + encodeURIComponent(targetUrl);
-      
-      try {
-        const response = await fetch(proxyUrl);
-        const data = await response.json();
-        
-        const now = new Date();
-        const timeString = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}:${String(now.getSeconds()).padStart(2, '0')}`;
-        document.getElementById('mtr-time').textContent = `更新 ${timeString}`;
-
-        if (data.status === 1 && data.data && data.data['TKL-LHP']) {
-          const upSchedule = data.data['TKL-LHP'].UP || [];
-          let html = '';
-          
-          upSchedule.slice(0, 4).forEach(item => {
-            const timeStr = item.ttnt ? item.ttnt.split(' ')[1].substring(0, 5) : '--:--';
-            const destMap = { 'TIK': '調景嶺', 'NOP': '北角', 'POA': '寶琳' };
-            const destName = destMap[item.dest] || item.dest;
-            
-            html += `
-              <div class="mtr-row">
-                <span>${timeStr}</span>
-                <span>${destName}</span>
-                <span class="badge-eta">${item.time} MIN</span>
-              </div>
-            `;
-          });
-          
-          if (html) {
-            document.getElementById('mtr-data').innerHTML = html;
-            return;
-          }
-        }
-        throw new Error('數據解析失敗');
-      } catch (e) {
-        document.getElementById('mtr-data').innerHTML = `
-          <div class="mtr-row"><span>14:45</span><span>調景嶺</span><span class="badge-eta">3 MIN</span></div>
-          <div class="mtr-row"><span>14:52</span><span>北角</span><span class="badge-eta">10 MIN</span></div>
-          <div class="mtr-row"><span>14:59</span><span>調景嶺</span><span class="badge-eta">17 MIN</span></div>
-        `;
-      }
-    }
-
-    // 8. MEMO / TODO
-    let todos = JSON.parse(localStorage.getItem('my_dashboard_todos')) || [
-      { text: '飲1.5公升水', done: true }
-    ];
-
-    function renderTodos() {
-      const container = document.getElementById('todo-list');
-      container.innerHTML = '';
-      todos.forEach((item, index) => {
-        const div = document.createElement('div');
-        div.className = `todo-item ${item.done ? 'completed' : ''}`;
-        div.innerHTML = `
-          <label style="display:flex; align-items:center; gap:6px; cursor:pointer;">
-            <input type="checkbox" ${item.done ? 'checked' : ''} onchange="toggleTodo(${index})">
-            <span>${item.text}</span>
-          </label>
-          <button class="btn-del" onclick="deleteTodo(${index})">✕</button>
-        `;
-        container.appendChild(div);
-      });
-      localStorage.setItem('my_dashboard_todos', JSON.stringify(todos));
-    }
-
-    function addTodo() {
-      const input = document.getElementById('new-todo');
-      const text = input.value.trim();
-      if (text) {
-        todos.push({ text, done: false });
-        input.value = '';
-        renderTodos();
-      }
-    }
-
-    function handleKeyPress(e) {
-      if (e.key === 'Enter') addTodo();
-    }
-
-    function toggleTodo(index) {
-      todos[index].done = !todos[index].done;
-      renderTodos();
-    }
-
-    function deleteTodo(index) {
-      todos.splice(index, 1);
-      renderTodos();
-    }
-
-    setInterval(updateClock, 1000);
-    setInterval(fetchMTRData, 10000);
-    
-    updateClock();
-    initTripUI();
-    fetchGoogleCalendar();
-    renderTodos();
-    fetchHKWeather();
-    fetchFukuokaWeather();
-    fetchMTRData();
-  </script>
-</body>
-</html>
-// 👈 將你 Google 日曆的 iCal 秘密網址貼在此處
-
-    async function fetchGoogleCalendar() {
-      if (!GOOGLE_ICAL_URL) {
-        renderLocalSchedules();
-        return;
+    function getWeatherIcon(desc, code = null) {
+      if (code !== null) {
+        if (code === 0) return "☀️";
+        if (code >= 1 && code <= 3) return "⛅";
+        if (code >= 45 && code <= 48) return "🌫️";
+        if (code >= 51 && code <= 67) return "🌧️";
+        if (code >= 71 && code <= 77) return "❄️";
+        if (code >= 80 && code <= 82) return "🌧️";
+        if (code >= 95) return "⛈️";
       }
 
-      try {
-        const proxyUrl = 'https://corsproxy.io/?' + encodeURIComponent(GOOGLE_ICAL_URL);
-        const response = await fetch(proxyUrl);
-        const icalText = await response.text();
-
-        // 簡單解析 iCal 格式的 SUMMARY 與 DTSTART
-        const events = [];
-        const lines = icalText.split('\n');
-        let currentEvent = {};
-
-        lines.forEach(line => {
-          if (line.startsWith('BEGIN:VEVENT')) currentEvent = {};
-          if (line.startsWith('SUMMARY:')) currentEvent.title = line.replace('SUMMARY:', '').trim();
-          if (line.startsWith('DTSTART')) {
-            const timeVal = line.split(':')[1];
-            if (timeVal && timeVal.length >= 13) {
-              const hour = timeVal.substring(9, 11);
-              const min = timeVal.substring(11, 13);
-              currentEvent.time = `${hour}:${min}`;
-            } else {
-              currentEvent.time = '全天';
-            }
-          }
-          if (line.startsWith('END:VEVENT')) {
-            if (currentEvent.title) events.push(currentEvent);
-          }
-        });
-
-        if (events.length > 0) {
-          const container = document.getElementById('schedule-list');
-          container.innerHTML = '';
-          events.slice(0, 5).forEach(item => {
-            const div = document.createElement('div');
-            div.className = 'schedule-item';
-            div.innerHTML = `<span><b>${item.time || '--:--'}</b> ${item.title}</span>`;
-            container.appendChild(div);
-          });
-          document.getElementById('cal-status').textContent = '已同步 Google 日曆';
-        } else {
-          renderLocalSchedules();
-        }
-      } catch (e) {
-        console.log("Google Calendar 讀取失敗，改用預設行程", e);
-        renderLocalSchedules();
-      }
-    }
-
-    function renderLocalSchedules() {
-      let schedules = JSON.parse(localStorage.getItem('my_dashboard_schedules')) || [
-        { time: '11:30', text: '準備出門' },
-        { time: '13:30', text: '與朋友 Lunch' },
-        { time: '16:00', text: '拍攝 / 整理相片' },
-        { time: '19:00', text: '日文 N4 課堂' }
-      ];
-
-      const container = document.getElementById('schedule-list');
-      container.innerHTML = '';
-      schedules.forEach((item) => {
-        const div = document.createElement('div');
-        div.className = 'schedule-item';
-        div.innerHTML = `<span><b>${item.time}</b> ${item.text}</span>`;
-        container.appendChild(div);
-      });
-    }
-
-    // 4. 主題切換邏輯
-    function handleTheme(now) {
-      const month = now.getMonth() + 1;
-      const date = now.getDate();
-      const hours = now.getHours();
-      const body = document.body;
-      const statusText = document.getElementById('theme-status');
-
-      body.className = '';
-
-      if (month === 1 && date === 29) {
-        body.classList.add('theme-cny');
-        statusText.textContent = '🧧 新的一年，新的開始。璀璨好好生活！';
-      } else if (hours >= 6 && hours < 18) {
-        body.classList.add('theme-day');
-        statusText.textContent = 'HAVE A NICE DAY! 今天也是很棒的一天。';
-      } else {
-        body.classList.add('theme-night');
-        statusText.textContent = 'GOOD NIGHT & SWEET DREAMS 🌙 明日もいい日になりますように。';
-      }
-    }
-
-    // 5. 香港實時天氣 API
-    async function fetchHKWeather() {
-      try {
-        const response = await fetch('https://data.weather.gov.hk/weatherAPI/opendata/weather.php?dataType=rhrread&lang=tc');
-        const data = await response.json();
-        
-        if(data.temperature && data.temperature.data) {
-          const hkTemp = data.temperature.data.find(t => t.place === "香港天文台") || data.temperature.data[0];
-          document.getElementById('hk-temp').textContent = `${hkTemp.value}°C`;
-        }
-        if(data.humidity && data.humidity.data) {
-          document.getElementById('hk-humidity').textContent = `${data.humidity.data[0].value}%`;
-        }
-        document.getElementById('hk-desc').textContent = "間中有雨";
-        document.getElementById('hk-range').textContent = "↑ 33°C ↓ 27°C";
-      } catch (e) {
-        console.log("香港天氣獲取失敗", e);
-      }
-    }
-
-    // 6. 福岡實時天氣 API
-    async function fetchFukuokaWeather() {
-      try {
-        const url = 'https://api.open-meteo.com/v1/forecast?latitude=33.5902&longitude=130.4017&current=temperature_2m,relative_humidity_2m,weather_code&daily=temperature_2m_max,temperature_2m_min&timezone=Asia%2FTokyo';
-        const response = await fetch(url);
-        const data = await response.json();
-
-        if(data.current) {
-          document.getElementById('fuk-temp').textContent = `${Math.round(data.current.temperature_2m)}°C`;
-          document.getElementById('fuk-humidity').textContent = `${data.current.relative_humidity_2m}%`;
-          
-          const code = data.current.weather_code;
-          let desc = "多雲時晴";
-          if (code === 0) desc = "晴朗無雲";
-          else if (code >= 1 && code <= 3) desc = "多雲時晴";
-          else if (code >= 51 && code <= 67) desc = "有雨";
-          else if (code >= 80 && code <= 82) desc = "陣雨";
-          document.getElementById('fuk-desc').textContent = desc;
-        }
-
-        if(data.daily) {
-          const max = Math.round(data.daily.temperature_2m_max[0]);
-          const min = Math.round(data.daily.temperature_2m_min[0]);
-          document.getElementById('fuk-range').textContent = `↑ ${max}°C ↓ ${min}°C`;
-        }
-      } catch (e) {
-        console.log("福岡天氣獲取失敗", e);
-      }
+      if (desc.includes("晴")) return "☀️";
+      if (desc.includes("雨")) return "🌧️";
+      if (desc.includes("雷")) return "⛈️";
+      if (desc.includes("雪")) return "❄️";
+      if (desc.includes("霧") || desc.includes("霞")) return "🌫️";
+      return "⛅";
     }
 
     // 7. 港鐵 API
