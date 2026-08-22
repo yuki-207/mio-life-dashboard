@@ -79,14 +79,11 @@
     }
 
     .dashboard-container {
-      display: flex;
-      gap: 20px;
-      max-width: 1400px;
+      max-width: 1200px;
       width: 100%;
     }
 
     .main-panel {
-      flex: 1;
       display: flex;
       flex-direction: column;
       gap: 15px;
@@ -105,6 +102,8 @@
       padding: 16px;
       position: relative;
       box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+      display: flex;
+      flex-direction: column;
     }
 
     .card-title {
@@ -164,7 +163,7 @@
       margin-top: 4px;
     }
 
-    /* 共享輸入欄與按鈕樣式 */
+    /* 輸入欄與按鈕 */
     .input-container {
       display: flex;
       gap: 6px;
@@ -191,20 +190,10 @@
       font-size: 0.8rem;
     }
 
-    /* TODAY 列表樣式 */
-    .schedule-item {
+    .schedule-item, .todo-item {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      font-size: 0.8rem;
-      margin-bottom: 4px;
-    }
-
-    /* TODO 列表樣式 */
-    .todo-item {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
       font-size: 0.8rem;
       margin-bottom: 6px;
     }
@@ -212,13 +201,6 @@
     .todo-item.completed span {
       text-decoration: line-through;
       opacity: 0.6;
-    }
-
-    .todo-item label {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      cursor: pointer;
     }
 
     .btn-del {
@@ -230,28 +212,32 @@
       opacity: 0.6;
     }
 
-    .btn-del:hover {
-      opacity: 1;
-    }
+    .btn-del:hover { opacity: 1; }
 
-    /* 側邊欄 */
-    .sidebar {
-      width: 200px;
-      background-color: var(--card-bg);
-      border: 1px solid var(--card-border);
-      border-radius: 16px;
-      padding: 16px;
+    /* 內嵌貓咪區塊樣式 */
+    .cat-section {
+      margin-top: 12px;
       display: flex;
-      flex-direction: column;
+      gap: 10px;
       align-items: center;
-      gap: 12px;
     }
 
     .cat-avatar {
       width: 100%;
-      height: 120px;
+      height: 110px;
       object-fit: cover;
-      border-radius: 12px;
+      border-radius: 10px;
+    }
+
+    .cat-box {
+      flex: 1;
+      text-align: center;
+    }
+
+    .cat-label {
+      font-size: 0.7rem;
+      color: var(--text-sub);
+      margin-top: 4px;
     }
 
     .footer-bar {
@@ -295,26 +281,23 @@
         </div>
       </div>
 
-      <!-- 第二排：港鐵到站 + TODAY (可編輯) + 今日日語 -->
+      <!-- 第二排：港鐵到站 + TODAY + 今日日語 -->
       <div class="grid-row">
         <div class="card">
-          <div class="card-title">🚇 港鐵康城站 LOHAS PARK <span style="font-size: 0.6rem; margin-left: auto;" id="mtr-time">更新 10:58:20</span></div>
+          <div class="card-title">🚇 港鐵康城站 LOHAS PARK <span style="font-size: 0.6rem; margin-left: auto;" id="mtr-time">更新中...</span></div>
           <div class="mtr-list" id="mtr-data">
             <div class="mtr-row"><span>--:--</span><span>載入中...</span><span class="badge-eta">- MIN</span></div>
           </div>
         </div>
 
-        <!-- 📅 TODAY 卡片 (已升級為可動態新增/刪除) -->
         <div class="card">
           <div class="card-title">📅 TODAY</div>
           <div class="input-container">
-            <input type="text" id="schedule-time" class="custom-input" placeholder="時間 (如 11:30)" style="flex: 0.8;">
+            <input type="text" id="schedule-time" class="custom-input" placeholder="11:30" style="flex: 0.6;">
             <input type="text" id="schedule-text" class="custom-input" placeholder="行程內容...">
             <button class="btn-action" onclick="addSchedule()">加</button>
           </div>
-          <div id="schedule-list">
-            <!-- 動態生成 TODAY 行程 -->
-          </div>
+          <div id="schedule-list"></div>
         </div>
 
         <div class="card">
@@ -325,33 +308,41 @@
         </div>
       </div>
 
-      <!-- 第三排：NEXT TRIP (可編輯) + MEMO + 今日小事 -->
+      <!-- 第三排：NEXT TRIP + MEMO + 今日小事與隨機貓咪 -->
       <div class="grid-row">
-        <!-- ✈️ NEXT TRIP 卡片 (已升級為可直接設定目的地與日期) -->
         <div class="card">
           <div class="card-title">✈️ NEXT TRIP</div>
           <div style="display: flex; flex-direction: column; gap: 4px; margin-bottom: 6px;">
-            <input type="text" id="trip-dest-input" class="custom-input" placeholder="目的地 (例如: 京都 KYOTO)" onchange="updateTripInfo()">
+            <input type="text" id="trip-dest-input" class="custom-input" placeholder="目的地 (例: 京都 KYOTO)" onchange="updateTripInfo()">
             <input type="date" id="trip-date-input" class="custom-input" onchange="updateTripInfo()">
           </div>
           <div class="countdown-num" id="countdown-days">0 <span style="font-size: 0.9rem;">DAYS</span></div>
         </div>
 
-        <!-- 📝 MEMO / TODO 卡片 -->
         <div class="card">
           <div class="card-title">📝 MEMO / TODO</div>
           <div class="input-container">
             <input type="text" id="new-todo" class="custom-input" placeholder="新增待辦事項..." onkeypress="handleKeyPress(event)">
             <button class="btn-action" onclick="addTodo()">新增</button>
           </div>
-          <div id="todo-list">
-            <!-- 動態生成 TODO -->
-          </div>
+          <div id="todo-list"></div>
         </div>
 
         <div class="card">
           <div class="card-title">🐱 今日的小事</div>
-          <div style="font-size: 0.85rem; margin-top: 5px;">仲有 3 分鐘有車。呢個唔係倒數，係警告。</div>
+          <div style="font-size: 0.85rem; margin-top: 2px;">仲有 3 分鐘有車。呢個唔係倒數，係警告。</div>
+          
+          <!-- 搬到這裡的貓咪區塊 -->
+          <div class="cat-section">
+            <div class="cat-box">
+              <img id="cat-img-1" src="" class="cat-avatar" alt="Cat 1">
+              <div class="cat-label">美短虎斑</div>
+            </div>
+            <div class="cat-box">
+              <img id="cat-img-2" src="" class="cat-avatar" alt="Cat 2">
+              <div class="cat-label">布偶貓</div>
+            </div>
+          </div>
         </div>
       </div>
 
@@ -359,15 +350,6 @@
         HAVE A NICE DAY! 今天也是很棒的一天。
       </div>
 
-    </div>
-
-    <!-- 側邊欄：每日隨機貓貓 -->
-    <div class="sidebar">
-      <div style="font-size: 0.85rem; font-weight: bold; text-align: center;">每日隨機貓貓<br><span style="font-size: 0.7rem; font-weight: normal; color: var(--text-sub);">Random Cats</span></div>
-      <img src="https://api.thecatapi.com/v1/images/search?format=src" class="cat-avatar" alt="Cat 1">
-      <div style="font-size: 0.75rem; color: var(--text-sub);">美短虎斑</div>
-      <img src="https://cataas.com/cat" class="cat-avatar" alt="Cat 2">
-      <div style="font-size: 0.75rem; color: var(--text-sub);">布偶貓</div>
     </div>
   </div>
 
@@ -386,7 +368,7 @@
       calcCountdown();
     }
 
-    // 2. ✈️ NEXT TRIP 動態更新與儲存
+    // 2. ✈️ NEXT TRIP
     let tripData = JSON.parse(localStorage.getItem('my_dashboard_trip')) || {
       dest: '京都 KYOTO',
       date: '2026-10-10'
@@ -417,7 +399,7 @@
       document.getElementById('countdown-days').innerHTML = `${diffDays > 0 ? diffDays : 0} <span style="font-size: 0.9rem;">DAYS</span>`;
     }
 
-    // 3. 📅 TODAY 行程管理 (LocalStorage)
+    // 3. 📅 TODAY 行程
     let schedules = JSON.parse(localStorage.getItem('my_dashboard_schedules')) || [
       { time: '11:30', text: '準備出門' },
       { time: '13:30', text: '與朋友 Lunch' },
@@ -486,7 +468,7 @@
       }
     }
 
-    // 5. 天氣 API
+    // 5. 香港天文台 API
     async function fetchHKWeather() {
       try {
         const response = await fetch('https://data.weather.gov.hk/weatherAPI/opendata/weather.php?dataType=rhrread&lang=tc');
@@ -504,10 +486,14 @@
       }
     }
 
-    // 6. 港鐵 API
+    // 6. 港鐵 API (修復 CORS 問題)
     async function fetchMTRData() {
       try {
-        const response = await fetch('https://rt.data.gov.hk/v1/transport/mtr/getSchedule.php?line=TKL&sta=LHP');
+        const targetUrl = 'https://rt.data.gov.hk/v1/transport/mtr/getSchedule.php?line=TKL&sta=LHP';
+        // 使用 CORS 代理伺服器
+        const proxyUrl = 'https://api.allorigins.win/raw?url=' + encodeURIComponent(targetUrl);
+        
+        const response = await fetch(proxyUrl);
         const data = await response.json();
         
         const now = new Date();
@@ -536,6 +522,7 @@
         }
       } catch (e) {
         console.log("港鐵數據獲取失敗", e);
+        document.getElementById('mtr-data').innerHTML = '<div class="mtr-row"><span>--:--</span><span>數據讀取失敗</span><span class="badge-eta">-</span></div>';
       }
     }
 
@@ -543,7 +530,7 @@
     let todos = JSON.parse(localStorage.getItem('my_dashboard_todos')) || [
       { text: '買 SUICA 增值', done: false },
       { text: '整理旅行清單', done: false },
-      { text: '飲水！每日 1.5L 💧', done: true }
+      { text: '飲1.5公升水', done: true }
     ];
 
     function renderTodos() {
@@ -553,7 +540,7 @@
         const div = document.createElement('div');
         div.className = `todo-item ${item.done ? 'completed' : ''}`;
         div.innerHTML = `
-          <label>
+          <label style="display:flex; align-items:center; gap:6px; cursor:pointer;">
             <input type="checkbox" ${item.done ? 'checked' : ''} onchange="toggleTodo(${index})">
             <span>${item.text}</span>
           </label>
@@ -588,7 +575,14 @@
       renderTodos();
     }
 
-    // 初始化觸發
+    // 8. 載入隨機貓咪圖片
+    function loadCatImages() {
+      const randomTime = new Date().getTime();
+      document.getElementById('cat-img-1').src = `https://cataas.com/cat?t=${randomTime}`;
+      document.getElementById('cat-img-2').src = `https://cataas.com/cat/cute?t=${randomTime + 1}`;
+    }
+
+    // 初始化與定時器
     setInterval(updateClock, 1000);
     setInterval(fetchMTRData, 10000);
     
@@ -598,6 +592,7 @@
     renderTodos();
     fetchHKWeather();
     fetchMTRData();
+    loadCatImages();
   </script>
 </body>
 </html>
